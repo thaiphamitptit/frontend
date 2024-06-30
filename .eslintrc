@@ -1,0 +1,36 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:vue/vue3-recommended",
+    "plugin:import/recommended",
+    "eslint-config-prettier",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": [
+      "warn",
+      {
+        "arrowParens": "always",
+        "semi": false,
+        "trailingComma": "none",
+        "tabWidth": 2,
+        "endOfLine": "auto",
+        "useTabs": false,
+        "singleQuote": true,
+        "printWidth": 120,
+        "jsxSingleQuote": true
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".js", ".vue"]
+      }
+    }
+  },
+  "ignorePatterns": ["vite.config.js"]
+}
