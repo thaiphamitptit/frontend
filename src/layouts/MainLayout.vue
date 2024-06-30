@@ -15,4 +15,14 @@ import SidebarComponent from '@/components/SidebarComponent.vue'
   </div>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.container {
+  display: flex;
+  width: 1280px;
+}
+</style>
