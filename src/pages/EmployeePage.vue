@@ -2,7 +2,7 @@
 
 <template>
   <div class="wrapper">
-    <router-view></router-view>
+    <h1>Employee</h1>
   </div>
 </template>
 
