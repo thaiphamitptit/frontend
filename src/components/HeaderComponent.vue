@@ -36,7 +36,8 @@
   box-shadow: 0 1px 1px #e0e0e0;
 }
 .container {
-  width: 1280px;
+  width: 100%;
+  max-width: 1280px;
   height: 100%;
   display: flex;
 }

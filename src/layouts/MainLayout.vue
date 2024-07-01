@@ -23,6 +23,10 @@ import SidebarComponent from '@/components/SidebarComponent.vue'
 }
 .container {
   display: flex;
-  width: 1280px;
+  width: 100%;
+  max-width: 1280px;
+}
+.content {
+  flex-grow: 1;
 }
 </style>
