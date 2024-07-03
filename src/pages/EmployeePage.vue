@@ -18,7 +18,7 @@ for (let i = 1; i <= 100; i++) {
       <div class="employees">
         <div class="header">
           <h1 class="header__title">Quản lý Nhân viên</h1>
-          <router-link to="#" class="header__add-employee-btn">
+          <router-link to="/employees/detail" class="header__add-employee-btn">
             <div class="header__add-employee-btn__icon"><img src="../assets/icons/add.png" alt="add icon" /></div>
             <span class="header__add-employee-btn__text">Thêm mới</span>
           </router-link>
@@ -76,7 +76,7 @@ for (let i = 1; i <= 100; i++) {
                   <td class="cell-group">
                     <span>{{ employee.address }}</span>
                     <div class="cta">
-                      <router-link to="#" class="cta__update-btn">
+                      <router-link to="/employees/detail" class="cta__update-btn">
                         <img src="../assets/icons/pencil.png" alt="pencil icon" />
                       </router-link>
                       <button class="cta__duplicate-btn">
@@ -151,8 +151,11 @@ for (let i = 1; i <= 100; i++) {
     border-radius: 4px;
     cursor: pointer;
 
-    &:hover img {
-      transform: scale(1.2);
+    &:hover {
+      opacity: 0.8;
+      img {
+        transform: scale(1.2);
+      }
     }
   }
 
@@ -350,7 +353,7 @@ tr {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  column-gap: 12px;
 }
 .btn-group {
   display: flex;
