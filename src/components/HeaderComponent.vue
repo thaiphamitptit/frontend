@@ -4,11 +4,11 @@
   <div class="wrapper">
     <div class="container">
       <div class="header">
-        <div class="header-control">
-          <button class="header-control__toggle-btn">
+        <div class="header-navbar">
+          <button class="header-navbar__toggle-btn">
             <img src="../assets/icons/toggle.png" alt="toggle icon" />
           </button>
-          <router-link to="/" class="header-control__logo-link">
+          <router-link to="/" class="header-navbar__logo-link">
             <img src="../assets/imgs/logo.png" alt="logo img" />
           </router-link>
         </div>
@@ -37,7 +37,6 @@
 }
 .container {
   width: 100%;
-  max-width: 1280px;
   height: 100%;
   display: flex;
 }
@@ -47,7 +46,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.header-control {
+.header-navbar {
   display: flex;
   align-items: center;
   margin: 0 12px;

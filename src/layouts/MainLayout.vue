@@ -22,9 +22,8 @@ import SidebarComponent from '@/components/SidebarComponent.vue'
   align-items: center;
 }
 .container {
-  display: flex;
   width: 100%;
-  max-width: 1280px;
+  display: flex;
 }
 .content {
   flex-grow: 1;
