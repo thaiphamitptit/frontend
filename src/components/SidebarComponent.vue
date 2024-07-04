@@ -4,6 +4,8 @@ import homeIcon from '../assets/icons/home.png'
 import reportIcon from '../assets/icons/report.png'
 import employeeIcon from '../assets/icons/employee.png'
 import settingIcon from '../assets/icons/setting.png'
+import arrowLeftIcon from '../assets/icons/arrow-left.svg'
+import arrowRightIcon from '../assets/icons/arrow-right.svg'
 defineProps({
   collapsed: {
     type: Boolean,
@@ -52,22 +54,19 @@ const sidebarItems = [
       <div class="sidebar">
         <ul class="sidebar-menu">
           <li v-for="sidebarItem in sidebarItems" :key="sidebarItem.id" class="sidebar-menu__item">
-            <router-link class="sidebar-menu__action" :to="sidebarItem.route">
-              <div class="sidebar-menu__action__icon">
+            <router-link class="sidebar-menu__link" :to="sidebarItem.route">
+              <div class="sidebar-menu__icon">
                 <img :src="sidebarItem.icon" :alt="sidebarItem.alt" />
               </div>
-              <span v-if="!collapsed" class="sidebar-menu__action__text">{{ sidebarItem.text }}</span>
+              <span v-if="!collapsed" class="sidebar-menu__text">{{ sidebarItem.text }}</span>
             </router-link>
           </li>
         </ul>
-        <button class="sidebar-collapse-btn" @click="toggleSidebar">
-          <div v-if="!collapsed" class="sidebar-collapse-btn__icon">
-            <img src="../assets/icons/arrow-left.svg" alt="arrow icon" />
+        <button class="collapse-btn" @click="toggleSidebar">
+          <div class="collapse-btn__icon">
+            <img :src="collapsed ? arrowRightIcon : arrowLeftIcon" alt="arrow icon" />
           </div>
-          <div v-if="collapsed" class="sidebar-collapse-btn__icon">
-            <img src="../assets/icons/btn-next-page.svg" alt="arrow icon" />
-          </div>
-          <span v-if="!collapsed" class="sidebar-collapse-btn__text">Thu gọn</span>
+          <span v-if="!collapsed" class="collapse-btn__text">Thu gọn</span>
         </button>
       </div>
     </div>
@@ -115,26 +114,26 @@ const sidebarItems = [
     }
   }
 
-  &__action {
+  &__link {
     display: flex;
     align-items: center;
+  }
 
-    &__icon {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 4px;
-      margin: 6px 8px;
+  &__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    margin: 6px 8px;
 
-      img {
-        transition: transform 0.3s ease;
-        width: 24px;
-        height: 24px;
-      }
+    img {
+      transition: transform 0.3s ease;
+      width: 24px;
+      height: 24px;
     }
   }
 }
-.sidebar-collapse-btn {
+.collapse-btn {
   display: flex;
   align-items: center;
   padding: 0 12px;
