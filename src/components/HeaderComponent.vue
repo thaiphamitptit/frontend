@@ -4,6 +4,11 @@ const emit = defineEmits(['toggle-sidebar'])
 const toggleSidebar = () => {
   emit('toggle-sidebar')
 }
+const branchs = [
+  { id: 1, name: 'Chi nhánh Hà Nội' },
+  { id: 2, name: 'Chi nhánh Đà Nẵng' },
+  { id: 3, name: 'Chi nhánh TP HCM' }
+]
 </script>
 
 <template>
@@ -17,6 +22,9 @@ const toggleSidebar = () => {
           <router-link to="/" class="home-link">
             <img src="../assets/imgs/logo.png" alt="logo img" />
           </router-link>
+          <select id="branch" name="branch" class="custom-select">
+            <option v-for="branch in branchs" :key="branch" :value="branch">{{ branch.name }}</option>
+          </select>
         </div>
         <div class="profile">
           <div class="info">
@@ -58,34 +66,42 @@ const toggleSidebar = () => {
   margin: 0 12px;
   padding: 4px;
   column-gap: 12px;
-}
-.toggle-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4px;
-  border: none;
-  background: none;
-  cursor: pointer;
 
-  :hover {
-    transform: scale(1.2);
+  .toggle-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    :hover {
+      transform: scale(1.2);
+    }
+
+    img {
+      transition: transform 0.3s ease;
+      width: 24px;
+      height: 24px;
+    }
   }
 
-  img {
-    transition: transform 0.3s ease;
-    width: 24px;
-    height: 24px;
-  }
-}
-.home-link {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4px;
+  .home-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
 
-  img {
-    height: 32px;
+    img {
+      height: 32px;
+    }
+  }
+
+  .custom-select {
+    height: 36px;
+    margin: 24px;
+    cursor: pointer;
   }
 }
 .profile {
@@ -94,45 +110,49 @@ const toggleSidebar = () => {
   margin: 0 12px;
   padding: 4px;
   column-gap: 12px;
-}
-.info {
-  display: flex;
-  align-items: center;
-  column-gap: 12px;
-  cursor: pointer;
-}
-.avatar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4px;
 
-  img {
-    width: 32px;
-    height: 32px;
-    border: 1px solid #e0e0e0;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 1px 1px #e0e0e0;
+  .info {
+    display: flex;
+    align-items: center;
+    column-gap: 12px;
+    cursor: pointer;
+
+    .avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 4px;
+
+      img {
+        width: 32px;
+        height: 32px;
+        border: 1px solid #e0e0e0;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 1px 1px #e0e0e0;
+      }
+    }
+
+    .username {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
-}
-.username {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.option-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4px;
-  border: none;
-  background: none;
-  cursor: pointer;
 
-  img {
-    width: 24px;
-    height: 24px;
+  .option-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 </style>
