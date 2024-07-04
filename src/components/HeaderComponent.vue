@@ -10,22 +10,22 @@ const toggleSidebar = () => {
   <div class="wrapper">
     <div class="container">
       <div class="header">
-        <div class="header-navbar">
-          <button class="header-navbar__toggle-btn" @click="toggleSidebar">
+        <div class="navbar">
+          <button class="toggle-btn" @click="toggleSidebar">
             <img src="../assets/icons/toggle.png" alt="toggle icon" />
           </button>
-          <router-link to="/" class="header-navbar__logo-link">
+          <router-link to="/" class="home-link">
             <img src="../assets/imgs/logo.png" alt="logo img" />
           </router-link>
         </div>
-        <div class="header-profile">
-          <div class="header-profile__info">
-            <div class="header-profile__avatar">
+        <div class="profile">
+          <div class="info">
+            <div class="avatar">
               <img src="../assets/imgs/avatar.jpg" alt="avatar img" />
             </div>
-            <span class="header-profile__username">Đỗ Thu Hà</span>
+            <span class="username">Đỗ Thu Hà</span>
           </div>
-          <button class="header-profile__option-btn">
+          <button class="option-btn">
             <img src="../assets/icons/option.png" alt="option icon" />
           </button>
         </div>
@@ -52,93 +52,87 @@ const toggleSidebar = () => {
   justify-content: space-between;
   align-items: center;
 }
-.header-navbar {
+.navbar {
   display: flex;
   align-items: center;
   margin: 0 12px;
   padding: 4px;
   column-gap: 12px;
+}
+.toggle-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
 
-  &__toggle-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4px;
-    border: none;
-    background: none;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.2);
-    }
-
-    img {
-      transition: transform 0.3s ease;
-      width: 24px;
-      height: 24px;
-    }
+  :hover {
+    transform: scale(1.2);
   }
 
-  &__logo-link {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4px;
-
-    img {
-      height: 32px;
-    }
+  img {
+    transition: transform 0.3s ease;
+    width: 24px;
+    height: 24px;
   }
 }
-.header-profile {
+.home-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+
+  img {
+    height: 32px;
+  }
+}
+.profile {
   display: flex;
   align-items: center;
   margin: 0 12px;
   padding: 4px;
   column-gap: 12px;
+}
+.info {
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
+  cursor: pointer;
+}
+.avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
 
-  &__info {
-    display: flex;
-    align-items: center;
-    column-gap: 12px;
-    cursor: pointer;
+  img {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 1px 1px #e0e0e0;
   }
+}
+.username {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.option-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
 
-  &__avatar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4px;
-
-    img {
-      width: 32px;
-      height: 32px;
-      border: 1px solid #e0e0e0;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 1px 1px #e0e0e0;
-    }
-  }
-
-  &__username {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  &__option-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4px;
-    border: none;
-    background: none;
-    cursor: pointer;
-
-    img {
-      width: 24px;
-      height: 24px;
-    }
+  img {
+    width: 24px;
+    height: 24px;
   }
 }
 </style>
