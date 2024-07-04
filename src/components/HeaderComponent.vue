@@ -1,11 +1,17 @@
-<script setup></script>
+<script setup>
+import { defineEmits } from 'vue'
+const emit = defineEmits(['toggle-sidebar'])
+const toggleSidebar = () => {
+  emit('toggle-sidebar')
+}
+</script>
 
 <template>
   <div class="wrapper">
     <div class="container">
       <div class="header">
         <div class="header-navbar">
-          <button class="header-navbar__toggle-btn">
+          <button class="header-navbar__toggle-btn" @click="toggleSidebar">
             <img src="../assets/icons/toggle.png" alt="toggle icon" />
           </button>
           <router-link to="/" class="header-navbar__logo-link">

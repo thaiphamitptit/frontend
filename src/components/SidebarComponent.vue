@@ -1,9 +1,19 @@
 <script setup>
+import { defineProps, defineEmits } from 'vue'
 import homeIcon from '../assets/icons/home.png'
 import reportIcon from '../assets/icons/report.png'
 import employeeIcon from '../assets/icons/employee.png'
 import settingIcon from '../assets/icons/setting.png'
-
+defineProps({
+  collapsed: {
+    type: Boolean,
+    default: false
+  }
+})
+const emit = defineEmits(['toggle-sidebar'])
+const toggleSidebar = () => {
+  emit('toggle-sidebar')
+}
 const sidebarItems = [
   {
     id: 1,
@@ -38,7 +48,7 @@ const sidebarItems = [
 
 <template>
   <div class="wrapper">
-    <div class="container">
+    <div :class="['container', { collapsed: collapsed }]">
       <div class="sidebar">
         <ul class="sidebar-menu">
           <li v-for="sidebarItem in sidebarItems" :key="sidebarItem.id" class="sidebar-menu__item">
@@ -46,13 +56,18 @@ const sidebarItems = [
               <div class="sidebar-menu__action__icon">
                 <img :src="sidebarItem.icon" :alt="sidebarItem.alt" />
               </div>
-              <span class="sidebar-menu__action__text">{{ sidebarItem.text }}</span>
+              <span v-if="!collapsed" class="sidebar-menu__action__text">{{ sidebarItem.text }}</span>
             </router-link>
           </li>
         </ul>
-        <button class="sidebar-hide-btn">
-          <div class="sidebar-hide-btn__icon"><img src="../assets/icons/arrow-left.svg" alt="arrow icon" /></div>
-          <span class="sidebar-hide-btn__text">Thu gọn</span>
+        <button class="sidebar-collapse-btn" @click="toggleSidebar">
+          <div v-if="!collapsed" class="sidebar-collapse-btn__icon">
+            <img src="../assets/icons/arrow-left.svg" alt="arrow icon" />
+          </div>
+          <div v-if="collapsed" class="sidebar-collapse-btn__icon">
+            <img src="../assets/icons/btn-next-page.svg" alt="arrow icon" />
+          </div>
+          <span v-if="!collapsed" class="sidebar-collapse-btn__text">Thu gọn</span>
         </button>
       </div>
     </div>
@@ -70,6 +85,9 @@ const sidebarItems = [
   height: 100%;
   display: flex;
 }
+.collapsed {
+  width: 100%;
+}
 .sidebar {
   width: 100%;
   display: flex;
@@ -78,6 +96,7 @@ const sidebarItems = [
 }
 .sidebar-menu {
   margin: 12px;
+
   &__item {
     margin: 4px 0;
     border-radius: 8px;
@@ -85,10 +104,10 @@ const sidebarItems = [
 
     &:hover {
       background: #dfe5e8;
-    }
 
-    &:hover img {
-      transform: scale(1.2);
+      img {
+        transform: scale(1.2);
+      }
     }
 
     .router-link-exact-active {
@@ -115,15 +134,20 @@ const sidebarItems = [
     }
   }
 }
-.sidebar-hide-btn {
+.sidebar-collapse-btn {
   display: flex;
   align-items: center;
+  padding: 0 12px;
   border-top: 1px solid #e0e0e0;
   background: #ffffff;
   cursor: pointer;
 
-  &:hover img {
-    transform: scale(1.2);
+  &:hover {
+    background: #dfe5e8;
+
+    img {
+      transform: scale(1.2);
+    }
   }
 
   &__icon {
