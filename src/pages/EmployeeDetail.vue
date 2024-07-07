@@ -17,133 +17,145 @@ const departments = ref([
 <template>
   <div class="wrapper">
     <div class="container">
-      <div class="employee-detail">
+      <form class="employee">
         <div class="header">
-          <h1 class="header__title">Thông tin nhân viên</h1>
-          <router-link to="/employees" class="header__cancel-btn"
+          <h1 class="title">Thông tin nhân viên</h1>
+          <router-link to="/employees" class="cancel-btn"
             ><img src="../assets/icons/close.png" alt="close icon"
           /></router-link>
         </div>
-        <div class="form">
-          <form class="form-control">
-            <div class="row row-base">
-              <div class="row row-2">
-                <div class="row-2">
-                  <label for="employee-id"> <span>Mã nhân viên</span></label>
-                  <input id="employee-id" type="text" autofocus />
-                </div>
-                <div class="row-2">
-                  <label for="employee-name"><span>Họ và tên</span></label>
-                  <input id="employee-name" type="text" />
-                </div>
+        <div class="form-control">
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-id">Mã nhân viên</label>
+                <input id="employee-id" type="text" autofocus />
               </div>
-              <div class="row row-2">
-                <div class="row-2-5">
-                  <label for="employee-dob"><span>Ngày sinh</span></label>
-                  <input id="employee-dob" type="date" />
-                </div>
-                <div class="row-1-6">
-                  <label for="employee-gender"><span>Giới tính</span></label>
-                  <div class="input-group">
-                    <div class="input-group__item">
-                      <input id="male" name="gender" value="Nam" type="radio" />
-                      <label for="male"><span>Nam</span></label>
-                    </div>
-                    <div class="input-group__item">
-                      <input id="female" name="gender" value="Nữ" type="radio" />
-                      <label for="female"><span>Nữ</span></label>
-                    </div>
-                    <div class="input-group__item">
-                      <input id="other" name="gender" value="Khác" type="radio" />
-                      <label for="other"><span>Khác</span></label>
-                    </div>
+              <div class="form-group">
+                <label for="employee-name">Họ và tên</label>
+                <input id="employee-name" type="text" />
+              </div>
+            </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-dob">Ngày sinh</label>
+                <input id="employee-dob" type="date" />
+              </div>
+              <div class="form-group">
+                <label for="employee-gender">Giới tính</label>
+                <div class="input-group">
+                  <div class="input-group__item">
+                    <input id="male" name="gender" value="Nam" type="radio" />
+                    <label for="male">Nam</label>
+                  </div>
+                  <div class="input-group__item">
+                    <input id="female" name="gender" value="Nữ" type="radio" />
+                    <label for="female">Nữ</label>
+                  </div>
+                  <div class="input-group__item">
+                    <input id="other" name="gender" value="Khác" type="radio" />
+                    <label for="other">Khác</label>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="row row-base">
-              <div class="row-2">
-                <div class="employee-position">
-                  <label for="employee-position"><span>Vị trí</span></label>
-                  <select id="employee-position" name="employee-position">
-                    <option v-for="position in positions" :key="position.id" :value="position.name">
-                      {{ position.name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div class="row row-2">
-                <div class="row-1-6">
-                  <label for="employee-cmtnd"><span>CMTND</span></label>
-                  <input id="employee-cmtnd" type="text" />
-                </div>
-                <div class="row-2-5">
-                  <label for="employee-date-release"><span>Ngày cấp</span></label>
-                  <input id="employee-date-release" type="date" />
-                </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-position">Vị trí</label>
+                <select id="employee-position" name="employee-position" class="custom-select">
+                  <option v-for="position in positions" :key="position.id" :value="position.name">
+                    {{ position.name }}
+                  </option>
+                </select>
               </div>
             </div>
-            <div class="row row-base">
-              <div class="row-2">
-                <label for="employee-department"> <span>Phòng ban</span></label>
-                <select id="employee-department" name="employee-department">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-cid">CMTND</label>
+                <input id="employee-cid" type="text" />
+              </div>
+              <div class="form-group">
+                <label for="employee-dor">Ngày cấp</label>
+                <input id="employee-dor" type="date" />
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-department">Phòng ban</label>
+                <select id="employee-department" name="employee-department" class="custom-select">
                   <option v-for="department in departments" :key="department.id" :value="department.name">
                     {{ department.name }}
                   </option>
                 </select>
               </div>
-              <div class="row-2">
-                <label for="employee-where"><span>Nơi cấp</span></label>
-                <input id="employee-where" type="text" />
+            </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-por">Nơi cấp</label>
+                <input id="employee-por" type="text" />
               </div>
             </div>
-            <div class="row row-base">
-              <div class="row-1">
-                <label for="employee-address"> <span>Địa chỉ</span></label>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-address">Địa chỉ</label>
                 <input id="employee-address" type="text" />
               </div>
             </div>
-            <div class="row-base">
-              <div class="row">
-                <div class="row-3">
-                  <label for="employee-telephone"> <span>ĐT Cố định</span></label>
-                  <input id="employee-telephone" type="text" />
-                </div>
-                <div class="row-3">
-                  <label for="employee-phone"> <span>ĐT Di động</span></label>
-                  <input id="employee-phone" type="text" />
-                </div>
-                <div class="row-3">
-                  <label for="employee-email"> <span>Email</span></label>
-                  <input id="employee-email" type="email" />
-                </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-telephone">ĐT Cố định</label>
+                <input id="employee-telephone" type="text" />
               </div>
             </div>
-            <div class="row-base">
-              <div class="row">
-                <div class="row-3">
-                  <label for="employee-bank-account"> <span> Tài khoản ngân hàng</span></label>
-                  <input id="employee-bank-account" type="text" />
-                </div>
-                <div class="row-3">
-                  <label for="employee-bank-name"> <span>Tên ngân hàng</span></label>
-                  <input id="employee-bank-name" type="text" />
-                </div>
-                <div class="row-3">
-                  <label for="employee-branch"> <span>Chi nhánh</span></label>
-                  <input id="employee-branch" type="text" />
-                </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-phone">ĐT Di động</label>
+                <input id="employee-phone" type="text" />
               </div>
             </div>
-          </form>
-        </div>
-        <div class="footer">
-          <div class="actions">
-            <button class="actions__cancel">Huỷ</button>
-            <button class="actions__submit">Xác nhận</button>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-email">Email</label>
+                <input id="employee-email" type="email" placeholder="VD: dothuha.ftu@gmail.com" />
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-bank-account">Tài khoản ngân hàng</label>
+                <input id="employee-bank-account" type="text" />
+              </div>
+            </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-bank-name">Tên ngân hàng</label>
+                <input id="employee-bank-name" type="text" />
+              </div>
+            </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="employee-branch">Chi nhánh</label>
+                <input id="employee-branch" type="text" />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+        <div class="actions">
+          <div class="cta-group">
+            <button class="cta-group__cancel-btn">Huỷ</button>
+            <button class="cta-group__submit-btn">Xác nhận</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -156,8 +168,9 @@ const departments = ref([
 }
 .container {
   width: 100%;
+  max-width: 1280px;
 }
-.employee-detail {
+.employee {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -170,12 +183,12 @@ const departments = ref([
   justify-content: space-between;
   align-items: center;
 
-  &__title {
+  .title {
     margin: 0;
     font-size: 3rem;
   }
 
-  &__cancel-btn {
+  .cancel-btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -193,54 +206,79 @@ const departments = ref([
     }
   }
 }
-.form {
+.form-control {
   width: 100%;
   margin: 0 32px;
-}
-.row {
-  display: flex;
-  column-gap: 12px;
-}
-.row-base {
-  margin: 24px 0;
-  column-gap: 24px;
-}
-.row-1 {
-  flex-basis: 100%;
-}
-.row-2 {
-  flex-basis: 50%;
-}
-.row-3 {
-  flex-basis: 33.3%;
-}
-.row-2-5 {
-  flex-basis: 40%;
-}
-.row-1-6 {
-  flex-basis: 60%;
-}
-.input-group {
-  height: 36px;
-  display: flex;
-  align-items: center;
-  column-gap: 24px;
-  margin-top: 8px;
-  margin-left: 8px;
 
-  &__item {
+  .form-row {
     display: flex;
-    align-items: center;
-    column-gap: 8px;
+    margin: 24px 0;
+    column-gap: 12px;
+
+    .form-group {
+      width: 100%;
+
+      .input-group {
+        height: 36px;
+        display: flex;
+        align-items: center;
+        margin: 8px 12px;
+        column-gap: 24px;
+
+        &__item {
+          display: flex;
+          align-items: center;
+          column-gap: 8px;
+        }
+      }
+    }
+
+    .form-col {
+      width: 100%;
+      display: flex;
+      column-gap: 12px;
+    }
   }
 }
-input[type='text'],
-input[type='date'],
-input[type='email'],
+.actions {
+  width: calc(100% + 64px);
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 32px;
+  background: #eeeeee;
+
+  .cta-group {
+    display: flex;
+    column-gap: 12px;
+
+    &__cancel-btn,
+    &__submit-btn {
+      min-width: 80px;
+      height: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+      padding: 0 16px;
+      background: #4d646f;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    &__cancel-btn {
+      color: #000000;
+      background: #ffffff;
+    }
+  }
+}
+input:not([type='radio']),
 select {
   width: 100%;
   height: 36px;
-  display: block;
   margin-top: 8px;
   padding: 0 12px;
   border: 2px solid #e0e0e0;
@@ -249,39 +287,6 @@ select {
 input[type='radio'] {
   width: 16px;
   height: 16px;
-}
-.footer {
-  width: calc(100% + 64px);
-  display: flex;
-  justify-content: flex-end;
-  padding: 16px 32px;
-  background: #eeeeee;
-}
-.actions {
-  display: flex;
-  column-gap: 12px;
-
-  &__cancel,
-  &__submit {
-    min-width: 80px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #ffffff;
-    padding: 0 16px;
-    background: #4d646f;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-
-  &__cancel {
-    color: #000000;
-    background: #ffffff;
-  }
+  border: 2px solid #e0e0e0;
 }
 </style>
