@@ -152,7 +152,7 @@ const departments = ref([
         <div class="actions">
           <div class="cta-group">
             <button class="cta-group__cancel-btn">Huỷ</button>
-            <button class="cta-group__submit-btn">Xác nhận</button>
+            <button class="cta-group__submit-btn">Lưu</button>
           </div>
         </div>
       </form>
@@ -283,6 +283,9 @@ select {
   padding: 0 12px;
   border: 2px solid #e0e0e0;
   border-radius: 4px;
+}
+select {
+  cursor: pointer;
 }
 input[type='radio'] {
   width: 16px;

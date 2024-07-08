@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
 import homeIcon from '../assets/icons/home.png'
 import reportIcon from '../assets/icons/report.png'
 import employeeIcon from '../assets/icons/employee.png'
@@ -22,6 +21,7 @@ const sidebarItems = [
     route: '/',
     icon: homeIcon,
     text: 'Trang chủ',
+    tooltip: 'Trang chủ',
     alt: 'home icon'
   },
   {
@@ -29,6 +29,7 @@ const sidebarItems = [
     route: '/reports',
     icon: reportIcon,
     text: 'Báo cáo',
+    tooltip: 'Báo cáo',
     alt: 'report icon'
   },
   {
@@ -36,6 +37,7 @@ const sidebarItems = [
     route: '/employees',
     icon: employeeIcon,
     text: 'Nhân viên',
+    tooltip: 'Nhân viên',
     alt: 'employee icon'
   },
   {
@@ -43,6 +45,7 @@ const sidebarItems = [
     route: '/settings',
     icon: settingIcon,
     text: 'Cài đặt',
+    tooltip: 'Cài đặt',
     alt: 'setting icon'
   }
 ]
@@ -60,6 +63,7 @@ const sidebarItems = [
               </div>
               <span v-if="!collapsed" class="sidebar-menu__text">{{ sidebarItem.text }}</span>
             </router-link>
+            <div v-if="collapsed" class="sidebar-menu__tooltip">{{ sidebarItem.tooltip }}</div>
           </li>
         </ul>
         <button class="collapse-btn" @click="toggleSidebar">
@@ -97,9 +101,9 @@ const sidebarItems = [
   margin: 12px;
 
   &__item {
+    position: relative;
     margin: 4px 0;
     border-radius: 8px;
-    overflow: hidden;
 
     &:hover {
       background: #dfe5e8;
@@ -107,10 +111,17 @@ const sidebarItems = [
       img {
         transform: scale(1.2);
       }
+
+      .sidebar-menu__tooltip {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
 
     .router-link-exact-active {
       background: #a0b1ba;
+      border-radius: 8px;
     }
   }
 
@@ -130,6 +141,30 @@ const sidebarItems = [
       transition: transform 0.3s ease;
       width: 24px;
       height: 24px;
+    }
+  }
+
+  &__tooltip {
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: calc(100% + 16px);
+    transform: translateY(-50%);
+    background: #a0b1ba;
+    padding: 8px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      transform: translateY(-50%);
+      border-width: 4px;
+      border-style: solid;
+      border-color: transparent #a0b1ba transparent transparent;
     }
   }
 }

@@ -8,7 +8,7 @@ const address = 'Phan Đình Phùng, Ba Đình, Hà Nội'
 const employees = ref([])
 const limits = ref([10, 20, 50, 100])
 for (let i = 1; i <= 100; i++) {
-  employees.value.push({ id: i, name, dob, gender, email, address })
+  employees.value.push({ id: `NV-${i}`, name, dob, gender, email, address })
 }
 </script>
 
@@ -56,9 +56,9 @@ for (let i = 1; i <= 100; i++) {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="employee in employees" :key="employee.id" class="table-row">
+                <tr v-for="(employee, index) in employees" :key="employee.id" class="table-row">
+                  <td class="table-cell col-data">{{ index + 1 }}</td>
                   <td class="table-cell col-data">{{ employee.id }}</td>
-                  <td class="table-cell col-data">{{ `NV${employee.id}` }}</td>
                   <td class="table-cell col-data">{{ employee.name }}</td>
                   <td class="table-cell col-data">{{ employee.dob }}</td>
                   <td class="table-cell col-data">{{ employee.gender }}</td>

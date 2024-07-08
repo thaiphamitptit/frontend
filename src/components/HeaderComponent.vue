@@ -1,5 +1,4 @@
 <script setup>
-import { defineEmits } from 'vue'
 const emit = defineEmits(['toggle-sidebar'])
 const toggleSidebar = () => {
   emit('toggle-sidebar')
