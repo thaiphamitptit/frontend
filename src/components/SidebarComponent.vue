@@ -5,16 +5,14 @@ import employeeIcon from '../assets/icons/employee.png'
 import settingIcon from '../assets/icons/setting.png'
 import arrowLeftIcon from '../assets/icons/arrow-left.svg'
 import arrowRightIcon from '../assets/icons/arrow-right.svg'
-defineProps({
+
+const props = defineProps({
   collapsed: {
     type: Boolean,
     default: false
   }
 })
 const emit = defineEmits(['toggle-sidebar'])
-const toggleSidebar = () => {
-  emit('toggle-sidebar')
-}
 const sidebarItems = [
   {
     id: 1,
@@ -49,11 +47,15 @@ const sidebarItems = [
     alt: 'setting icon'
   }
 ]
+
+const toggleSidebar = () => {
+  emit('toggle-sidebar')
+}
 </script>
 
 <template>
   <div class="wrapper">
-    <div :class="['container', { collapsed: collapsed }]">
+    <div :class="['container', { collapsed: props.collapsed }]">
       <div class="sidebar">
         <ul class="sidebar-menu">
           <li v-for="sidebarItem in sidebarItems" :key="sidebarItem.id" class="sidebar-menu__item">
@@ -61,16 +63,16 @@ const sidebarItems = [
               <div class="sidebar-menu__icon">
                 <img :src="sidebarItem.icon" :alt="sidebarItem.alt" />
               </div>
-              <span v-if="!collapsed" class="sidebar-menu__text">{{ sidebarItem.text }}</span>
+              <span v-if="!props.collapsed" class="sidebar-menu__text">{{ sidebarItem.text }}</span>
             </router-link>
-            <div v-if="collapsed" class="sidebar-menu__tooltip">{{ sidebarItem.tooltip }}</div>
+            <div v-if="props.collapsed" class="sidebar-menu__tooltip">{{ sidebarItem.tooltip }}</div>
           </li>
         </ul>
         <button class="collapse-btn" @click="toggleSidebar">
           <div class="collapse-btn__icon">
-            <img :src="collapsed ? arrowRightIcon : arrowLeftIcon" alt="arrow icon" />
+            <img :src="props.collapsed ? arrowRightIcon : arrowLeftIcon" alt="arrow icon" />
           </div>
-          <span v-if="!collapsed" class="collapse-btn__text">Thu gọn</span>
+          <span v-if="!props.collapsed" class="collapse-btn__text">Thu gọn</span>
         </button>
       </div>
     </div>
@@ -103,7 +105,7 @@ const sidebarItems = [
   &__item {
     position: relative;
     margin: 4px 0;
-    border-radius: 8px;
+    border-radius: 4px;
 
     &:hover {
       background: #dfe5e8;
@@ -121,7 +123,7 @@ const sidebarItems = [
 
     .router-link-exact-active {
       background: #a0b1ba;
-      border-radius: 8px;
+      border-radius: 4px;
     }
   }
 

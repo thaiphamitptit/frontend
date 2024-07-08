@@ -1,22 +1,80 @@
 <script setup>
+import { ref } from 'vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import SidebarComponent from '@/components/SidebarComponent.vue'
-import { ref } from 'vue'
+import EmployeeModalComponent from '@/components/EmployeeModalComponent.vue'
+
 const isSidebarCollapsed = ref(false)
+const isEmployeeModalVisible = ref(false)
+const selectedEmployee = ref({})
+const name = 'Đỗ Thu Hà'
+const dob = '06/19/2002'
+const gender = 'Nữ'
+const email = 'dothuha.ftu@gmail.com'
+const address = 'Phan Đình Phùng, Ba Đình, Hà Nội'
+const employees = ref([])
+for (let i = 1; i <= 1000; i++) {
+  employees.value.push({ id: `NV-${i}`, name, dob, gender, email, address })
+}
+const positions = ref([
+  { id: 1, name: '' },
+  { id: 2, name: 'Trưởng phòng' },
+  { id: 3, name: 'Nhân viên' }
+])
+const departments = ref([
+  { id: 1, name: '' },
+  { id: 2, name: 'Phòng nhân sự' },
+  { id: 3, name: 'Phòng tài chính, kế toán' },
+  { id: 4, name: 'Phòng marketing' },
+  { id: 5, name: 'Phòng kỹ thuật, công nghệ' }
+])
+const branchs = [
+  { id: 1, name: 'Chi nhánh Hà Nội' },
+  { id: 2, name: 'Chi nhánh Đà Nẵng' },
+  { id: 3, name: 'Chi nhánh TP HCM' }
+]
+const limits = ref([10, 20, 50, 100])
+
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value
+}
+
+const showAddEmployeeModal = () => {
+  selectedEmployee.value = {}
+  isEmployeeModalVisible.value = true
+}
+
+const showUpdateEmployeeModal = (employee) => {
+  selectedEmployee.value = employee
+  isEmployeeModalVisible.value = true
+}
+
+const closeEmployeeModal = () => {
+  isEmployeeModalVisible.value = false
 }
 </script>
 
 <template>
   <div class="wrapper">
-    <HeaderComponent @toggle-sidebar="toggleSidebar" />
+    <HeaderComponent :branchs="branchs" @toggle-sidebar="toggleSidebar" />
     <div class="container">
       <SidebarComponent :collapsed="isSidebarCollapsed" @toggle-sidebar="toggleSidebar" />
       <div class="content">
-        <router-view></router-view>
+        <router-view
+          :employees="employees"
+          :limits="limits"
+          @show-add-employee-modal="showAddEmployeeModal"
+          @show-update-employee-modal="showUpdateEmployeeModal"
+        ></router-view>
       </div>
     </div>
+    <EmployeeModalComponent
+      :visible="isEmployeeModalVisible"
+      :employee="selectedEmployee"
+      :departments="departments"
+      :positions="positions"
+      @close-employee-modal="closeEmployeeModal"
+    />
   </div>
 </template>
 

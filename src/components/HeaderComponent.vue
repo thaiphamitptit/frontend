@@ -1,13 +1,15 @@
 <script setup>
+const props = defineProps({
+  branchs: {
+    type: Array,
+    required: true
+  }
+})
 const emit = defineEmits(['toggle-sidebar'])
+
 const toggleSidebar = () => {
   emit('toggle-sidebar')
 }
-const branchs = [
-  { id: 1, name: 'Chi nhánh Hà Nội' },
-  { id: 2, name: 'Chi nhánh Đà Nẵng' },
-  { id: 3, name: 'Chi nhánh TP HCM' }
-]
 </script>
 
 <template>
@@ -22,7 +24,7 @@ const branchs = [
             <img src="../assets/imgs/logo.png" alt="logo img" />
           </router-link>
           <select id="branch" name="branch" class="custom-select">
-            <option v-for="branch in branchs" :key="branch" :value="branch">{{ branch.name }}</option>
+            <option v-for="branch in props.branchs" :key="branch.id" :value="branch">{{ branch.name }}</option>
           </select>
         </div>
         <div class="profile">

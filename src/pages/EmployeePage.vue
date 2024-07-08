@@ -1,14 +1,23 @@
 <script setup>
-import { ref } from 'vue'
-const name = 'Đỗ Thu Hà'
-const dob = '19/06/2002'
-const gender = 'Nữ'
-const email = 'dothuha.ftu@gmail.com'
-const address = 'Phan Đình Phùng, Ba Đình, Hà Nội'
-const employees = ref([])
-const limits = ref([10, 20, 50, 100])
-for (let i = 1; i <= 100; i++) {
-  employees.value.push({ id: `NV-${i}`, name, dob, gender, email, address })
+const props = defineProps({
+  employees: {
+    type: Array,
+    required: true
+  },
+  limits: {
+    type: Array,
+    required: true
+  }
+})
+
+const emit = defineEmits(['show-add-employee-modal', 'show-update-employee-modal'])
+
+const showAddEmployeeModal = () => {
+  emit('show-add-employee-modal')
+}
+
+const showUpdateEmployeeModal = (employee) => {
+  emit('show-update-employee-modal', employee)
 }
 </script>
 
@@ -18,10 +27,10 @@ for (let i = 1; i <= 100; i++) {
       <div class="employees">
         <div class="header">
           <h1 class="title">Quản lý Nhân viên</h1>
-          <router-link to="/employees/detail" class="add-btn">
+          <button class="add-btn" @click="showAddEmployeeModal">
             <div class="add-btn__icon"><img src="../assets/icons/add.png" alt="add icon" /></div>
             <span class="add-btn__text">Thêm mới</span>
-          </router-link>
+          </button>
         </div>
         <div class="content">
           <div class="toolbars">
@@ -56,7 +65,7 @@ for (let i = 1; i <= 100; i++) {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(employee, index) in employees" :key="employee.id" class="table-row">
+                <tr v-for="(employee, index) in props.employees" :key="employee.id" class="table-row">
                   <td class="table-cell col-data">{{ index + 1 }}</td>
                   <td class="table-cell col-data">{{ employee.id }}</td>
                   <td class="table-cell col-data">{{ employee.name }}</td>
@@ -66,7 +75,7 @@ for (let i = 1; i <= 100; i++) {
                   <td class="table-cell col-group">
                     {{ employee.address }}
                     <div class="cta-group">
-                      <button class="cta-group__update-btn">
+                      <button class="cta-group__update-btn" @click="showUpdateEmployeeModal(employee)">
                         <img src="../assets/icons/pencil.png" alt="pencil icon" />
                       </button>
                       <button class="cta-group__duplicate-btn">
@@ -82,11 +91,11 @@ for (let i = 1; i <= 100; i++) {
             </table>
           </div>
           <div class="pagination">
-            <span class="summary">{{ `Tổng: ${employees.length}` }}</span>
+            <span class="summary">{{ `Tổng: ${props.employees.length}` }}</span>
             <div class="actions">
               <label for="limit">Số bản ghi/trang</label>
               <select id="limit" name="limit" class="custom-select">
-                <option v-for="limit in limits" :key="limit" :value="limit">{{ limit }}</option>
+                <option v-for="limit in props.limits" :key="limit" :value="limit">{{ limit }}</option>
               </select>
               <div class="cta-group">
                 <div class="cta-group__prev-page-btn">
