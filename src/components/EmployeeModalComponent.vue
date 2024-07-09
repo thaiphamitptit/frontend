@@ -45,7 +45,7 @@ const handleSubmit = () => {
       <form class="employee" @submit.prevent="handleSubmit">
         <div class="header">
           <h1 class="title">Thông tin nhân viên</h1>
-          <button class="cancel-btn" @click="closeEmployeeModal">
+          <button type="button" class="cancel-btn" @click="closeEmployeeModal">
             <img src="../assets/icons/close.png" alt="close icon" />
           </button>
         </div>
@@ -202,7 +202,7 @@ const handleSubmit = () => {
   justify-content: center;
   align-items: center;
   z-index: 10;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.7);
 }
 .container {
   width: 100%;
@@ -233,7 +233,6 @@ const handleSubmit = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 4px;
     background: transparent;
     cursor: pointer;
 

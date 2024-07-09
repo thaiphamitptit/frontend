@@ -10,7 +10,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['show-add-employee-modal', 'show-update-employee-modal'])
+const emit = defineEmits(['show-add-employee-modal', 'show-update-employee-modal', 'show-delete-employee-dialog'])
 
 const showAddEmployeeModal = () => {
   emit('show-add-employee-modal')
@@ -18,6 +18,10 @@ const showAddEmployeeModal = () => {
 
 const showUpdateEmployeeModal = (employee) => {
   emit('show-update-employee-modal', employee)
+}
+
+const showDeleteEmployeeDialog = (employee) => {
+  emit('show-delete-employee-dialog', employee)
 }
 </script>
 
@@ -81,7 +85,7 @@ const showUpdateEmployeeModal = (employee) => {
                       <button class="cta-group__duplicate-btn">
                         <img src="../assets/icons/duplicate.png" alt="duplicate icon" />
                       </button>
-                      <button class="cta-group__delete-btn">
+                      <button class="cta-group__delete-btn" @click="showDeleteEmployeeDialog(employee)">
                         <img src="../assets/icons/close.png" alt="close icon" />
                       </button>
                     </div>

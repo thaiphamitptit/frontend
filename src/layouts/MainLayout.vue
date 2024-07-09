@@ -3,9 +3,11 @@ import { ref } from 'vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import SidebarComponent from '@/components/SidebarComponent.vue'
 import EmployeeModalComponent from '@/components/EmployeeModalComponent.vue'
+import EmployeeDialogComponent from '@/components/EmployeeDialogComponent.vue'
 
 const isSidebarCollapsed = ref(false)
 const isEmployeeModalVisible = ref(false)
+const isEmployeeDialogVisible = ref(false)
 const selectedEmployee = ref({})
 const name = 'Đỗ Thu Hà'
 const dob = '06/19/2002'
@@ -49,8 +51,17 @@ const showUpdateEmployeeModal = (employee) => {
   isEmployeeModalVisible.value = true
 }
 
+const showDeleteEmployeeDialog = (employee) => {
+  selectedEmployee.value = employee
+  isEmployeeDialogVisible.value = true
+}
+
 const closeEmployeeModal = () => {
   isEmployeeModalVisible.value = false
+}
+
+const closeEmployeeDialog = () => {
+  isEmployeeDialogVisible.value = false
 }
 </script>
 
@@ -65,6 +76,7 @@ const closeEmployeeModal = () => {
           :limits="limits"
           @show-add-employee-modal="showAddEmployeeModal"
           @show-update-employee-modal="showUpdateEmployeeModal"
+          @show-delete-employee-dialog="showDeleteEmployeeDialog"
         ></router-view>
       </div>
     </div>
@@ -74,6 +86,11 @@ const closeEmployeeModal = () => {
       :departments="departments"
       :positions="positions"
       @close-employee-modal="closeEmployeeModal"
+    />
+    <EmployeeDialogComponent
+      :visible="isEmployeeDialogVisible"
+      :employee="selectedEmployee"
+      @close-employee-dialog="closeEmployeeDialog"
     />
   </div>
 </template>
