@@ -19,11 +19,15 @@ const props = defineProps({
     required: true
   }
 })
-const emit = defineEmits(['close-employee-modal'])
+const emit = defineEmits(['close-employee-modal', 'show-toast'])
 const employeeData = ref({})
 
 const closeEmployeeModal = () => {
   emit('close-employee-modal')
+}
+
+const showToast = (toastType, toastDesc) => {
+  emit('show-toast', toastType, toastDesc)
 }
 
 watch(
@@ -36,6 +40,7 @@ watch(
 
 const handleSubmit = () => {
   closeEmployeeModal()
+  showToast('success', 'Nhân viên đã được cập nhật vào hệ thống')
 }
 </script>
 

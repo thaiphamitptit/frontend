@@ -9,10 +9,19 @@ const props = defineProps({
     required: true
   }
 })
-const emit = defineEmits(['close-employee-dialog'])
+const emit = defineEmits(['close-employee-dialog', 'show-toast'])
 
 const closeEmployeeDialog = () => {
   emit('close-employee-dialog')
+}
+
+const showToast = (toastType, toastDesc) => {
+  emit('show-toast', toastType, toastDesc)
+}
+
+const handleSubmit = () => {
+  closeEmployeeDialog()
+  showToast('success', 'Nhân viên đã bị xoá khỏi hệ thống')
 }
 </script>
 
@@ -27,12 +36,12 @@ const closeEmployeeDialog = () => {
           </button>
         </div>
         <span class="desc">{{ `Bạn có chắc chắn muốn xóa nhân viên ${props.employee.id} không ?` }}</span>
-        <div class="actions">
+        <form class="actions" @submit.prevent="handleSubmit">
           <div class="cta-group">
-            <button class="cta-group__clear-btn" @click="closeEmployeeDialog">Không</button>
-            <button class="cta-group__submit-btn">Có</button>
+            <button type="button" class="cta-group__clear-btn" @click="closeEmployeeDialog">Không</button>
+            <button type="submit" class="cta-group__submit-btn">Có</button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>

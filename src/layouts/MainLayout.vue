@@ -4,11 +4,16 @@ import HeaderComponent from '@/components/HeaderComponent.vue'
 import SidebarComponent from '@/components/SidebarComponent.vue'
 import EmployeeModalComponent from '@/components/EmployeeModalComponent.vue'
 import EmployeeDialogComponent from '@/components/EmployeeDialogComponent.vue'
+import ToastComponent from '@/components/ToastComponent.vue'
 
 const isSidebarCollapsed = ref(false)
 const isEmployeeModalVisible = ref(false)
 const isEmployeeDialogVisible = ref(false)
 const selectedEmployee = ref({})
+const isToastVisible = ref(false)
+const toastType = ref('')
+const toastDesc = ref('')
+const toastDuration = ref(2000)
 const name = 'Đỗ Thu Hà'
 const dob = '06/19/2002'
 const gender = 'Nữ'
@@ -56,12 +61,25 @@ const showDeleteEmployeeDialog = (employee) => {
   isEmployeeDialogVisible.value = true
 }
 
+const showToast = (type, desc) => {
+  isToastVisible.value = true
+  toastType.value = type
+  toastDesc.value = desc
+  setTimeout(() => {
+    isToastVisible.value = false
+  }, toastDuration.value)
+}
+
 const closeEmployeeModal = () => {
   isEmployeeModalVisible.value = false
 }
 
 const closeEmployeeDialog = () => {
   isEmployeeDialogVisible.value = false
+}
+
+const closeToast = () => {
+  isToastVisible.value = false
 }
 </script>
 
@@ -86,12 +104,15 @@ const closeEmployeeDialog = () => {
       :departments="departments"
       :positions="positions"
       @close-employee-modal="closeEmployeeModal"
+      @show-toast="showToast"
     />
     <EmployeeDialogComponent
       :visible="isEmployeeDialogVisible"
       :employee="selectedEmployee"
       @close-employee-dialog="closeEmployeeDialog"
+      @show-toast="showToast"
     />
+    <ToastComponent :visible="isToastVisible" :type="toastType" :desc="toastDesc" @close-toast="closeToast" />
   </div>
 </template>
 
