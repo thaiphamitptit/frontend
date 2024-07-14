@@ -1,28 +1,104 @@
 <script setup>
-import { watch, ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import employeeApi from '@/apis/employee.api'
+import departmentApi from '@/apis/department.api'
+import positionApi from '@/apis/position.api'
 
 const props = defineProps({
   visible: {
     type: Boolean,
     required: true
   },
+  mode: {
+    type: String,
+    required: true
+  },
   employee: {
     type: Object,
-    required: true
-  },
-  departments: {
-    type: Array,
-    required: true
-  },
-  positions: {
-    type: Array,
-    required: true
+    default: () => ({
+      EmployeeCode: '',
+      FullName: '',
+      DateOfBirth: new Date().toISOString().split('T')[0],
+      Gender: 'Nữ',
+      IdentityNumber: '',
+      IdentityDate: new Date().toISOString().split('T')[0],
+      IdentityPlace: '',
+      Address: '',
+      PhoneNumber: '',
+      TelephoneNumber: '',
+      Email: '',
+      BankAccount: '',
+      BankName: '',
+      Branch: ''
+    })
   }
 })
-const emit = defineEmits(['close-employee-modal', 'show-toast'])
+const emit = defineEmits(['close-employee-modal', 'show-toast', 'employee-updated'])
 const employeeData = ref({})
+const departments = ref([])
+const positions = ref([])
+const genders = ref([
+  { id: 0, name: 'Nam' },
+  { id: 1, name: 'Nữ' },
+  { id: 2, name: 'Khác' }
+])
+
+const fetchDepartment = async () => {
+  try {
+    const response = await departmentApi.getDepartments()
+    departments.value = response.data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const fetchPosition = async () => {
+  try {
+    const response = await positionApi.getPositions()
+    positions.value = response.data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const resetEmployeeModal = () => {
+  if (props.mode === 'add') {
+    employeeData.value = {
+      EmployeeCode: '',
+      FullName: '',
+      DateOfBirth: new Date().toISOString().split('T')[0],
+      Gender: 0,
+      IdentityNumber: '',
+      IdentityDate: new Date().toISOString().split('T')[0],
+      IdentityPlace: '',
+      Address: '',
+      PhoneNumber: '',
+      TelephoneNumber: '',
+      Email: '',
+      BankAccount: '',
+      BankName: '',
+      Branch: ''
+    }
+  } else {
+    employeeData.value = {
+      ...props.employee,
+      DateOfBirth: props.employee.DateOfBirth.split('T')[0],
+      IdentityDate: props.employee.IdentityDate.split('T')[0]
+    }
+  }
+}
+
+onMounted(() => {
+  fetchDepartment()
+  fetchPosition()
+  resetEmployeeModal()
+})
+
+watch(() => props.mode, resetEmployeeModal)
+watch(() => props.employee, resetEmployeeModal, { immediate: true })
 
 const closeEmployeeModal = () => {
+  resetEmployeeModal()
   emit('close-employee-modal')
 }
 
@@ -30,17 +106,34 @@ const showToast = (toastType, toastDesc) => {
   emit('show-toast', toastType, toastDesc)
 }
 
-watch(
-  () => props.employee,
-  (newEmployee) => {
-    employeeData.value = { ...newEmployee }
-  },
-  { immediate: true }
-)
-
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  if (props.mode === 'add') {
+    await addEmployee(employeeData.value)
+  } else {
+    await updateEmployee(props.employee.EmployeeId, employeeData.value)
+  }
+  emit('employee-updated')
   closeEmployeeModal()
-  showToast('success', 'Nhân viên đã được cập nhật vào hệ thống')
+}
+
+const addEmployee = async (body) => {
+  try {
+    await employeeApi.addEmployee(body)
+    showToast('success', 'Nhân viên đã được thêm vào hệ thống')
+  } catch (err) {
+    console.error(err)
+    showToast('error', 'Đã có lỗi xảy ra, vui lòng thử lại')
+  }
+}
+
+const updateEmployee = async (employeeId, body) => {
+  try {
+    await employeeApi.updateEmployee(employeeId, body)
+    showToast('success', 'Nhân viên đã được cập nhật vào hệ thống')
+  } catch (err) {
+    console.error(err)
+    showToast('error', 'Đã có lỗi xảy ra, vui lòng thử lại')
+  }
 }
 </script>
 
@@ -58,33 +151,37 @@ const handleSubmit = () => {
           <div class="form-row">
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-id">Mã nhân viên</label>
-                <input id="employee-id" v-model="employeeData.id" type="text" autofocus />
+                <label for="employeeCode">Mã nhân viên</label>
+                <input
+                  id="employeeCode"
+                  v-model="employeeData.EmployeeCode"
+                  name="employeeCode"
+                  type="text"
+                  autofocus
+                />
               </div>
               <div class="form-group">
-                <label for="employee-name">Họ và tên</label>
-                <input id="employee-name" v-model="employeeData.name" type="text" />
+                <label for="fullName">Họ và tên</label>
+                <input id="fullName" v-model="employeeData.FullName" name="fullName" type="text" />
               </div>
             </div>
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-dob">Ngày sinh</label>
-                <input id="employee-dob" v-model="employeeData.dob" type="date" />
+                <label for="dateOfBirth">Ngày sinh</label>
+                <input id="dateOfBirth" v-model="employeeData.DateOfBirth" name="dateOfBirth" type="date" />
               </div>
               <div class="form-group">
-                <label for="employee-gender">Giới tính</label>
+                <label for="gender">Giới tính</label>
                 <div class="input-group">
-                  <div class="input-group__item">
-                    <input id="male" name="gender" value="Nam" type="radio" />
-                    <label for="male">Nam</label>
-                  </div>
-                  <div class="input-group__item">
-                    <input id="female" name="gender" value="Nữ" type="radio" />
-                    <label for="female">Nữ</label>
-                  </div>
-                  <div class="input-group__item">
-                    <input id="other" name="gender" value="Khác" type="radio" />
-                    <label for="other">Khác</label>
+                  <div v-for="gender in genders" :key="gender.id" class="input-group__item">
+                    <input
+                      :id="gender.id"
+                      v-model="employeeData.Gender"
+                      :value="gender.id"
+                      name="gender"
+                      type="radio"
+                    />
+                    <label for="male">{{ gender.name }}</label>
                   </div>
                 </div>
               </div>
@@ -93,100 +190,99 @@ const handleSubmit = () => {
           <div class="form-row">
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-position">Vị trí</label>
-                <select id="employee-position" name="employee-position" class="custom-select">
-                  <option v-for="position in props.positions" :key="position.id" :value="position.name">
-                    {{ position.name }}
+                <label for="positionId">Vị trí</label>
+                <select id="positionId" v-model="employeeData.PositionId" name="positionId" class="custom-select">
+                  <option v-for="position in positions" :key="position.PositionId" :value="position.PositionId">
+                    {{ position.PositionName }}
                   </option>
                 </select>
               </div>
             </div>
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-cid">CMTND</label>
-                <input id="employee-cid" type="text" />
+                <label for="identityNumber">CMTND</label>
+                <input id="identityNumber" v-model="employeeData.IdentityNumber" name="identityNumber" type="text" />
               </div>
               <div class="form-group">
-                <label for="employee-dor">Ngày cấp</label>
-                <input id="employee-dor" type="date" />
+                <label for="identityDate">Ngày cấp</label>
+                <input id="identityDate" v-model="employeeData.IdentityDate" name="identityDate" type="date" />
               </div>
             </div>
           </div>
           <div class="form-row">
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-department">Phòng ban</label>
-                <select id="employee-department" name="employee-department" class="custom-select">
-                  <option v-for="department in props.departments" :key="department.id" :value="department.name">
-                    {{ department.name }}
+                <label for="departmentId">Phòng ban</label>
+                <select id="departmentId" v-model="employeeData.DepartmentId" name="departmentId" class="custom-select">
+                  <option
+                    v-for="department in departments"
+                    :key="department.DepartmentId"
+                    :value="department.DepartmentId"
+                  >
+                    {{ department.DepartmentName }}
                   </option>
                 </select>
               </div>
             </div>
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-por">Nơi cấp</label>
-                <input id="employee-por" type="text" />
+                <label for="identityPlace">Nơi cấp</label>
+                <input id="identityPlace" v-model="employeeData.IdentityPlace" name="identityPlace" type="text" />
               </div>
             </div>
           </div>
           <div class="form-row">
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-address">Địa chỉ</label>
-                <input id="employee-address" v-model="employeeData.address" type="text" />
+                <label for="address">Địa chỉ</label>
+                <input id="address" v-model="employeeData.Address" name="address" type="text" />
               </div>
             </div>
           </div>
           <div class="form-row">
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-phone">ĐT Di động</label>
-                <input id="employee-phone" type="text" />
+                <label for="phoneNumber">ĐT Di động</label>
+                <input id="phoneNumber" v-model="employeeData.PhoneNumber" name="phoneNumber" type="text" />
               </div>
             </div>
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-telephone">ĐT Cố định</label>
-                <input id="employee-telephone" type="text" />
+                <label for="telephone">ĐT Cố định</label>
+                <input id="telephone" v-model="employeeData.TelephoneNumber" name="telephone" type="text" />
               </div>
             </div>
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-email">Email</label>
-                <input
-                  id="employee-email"
-                  v-model="employeeData.email"
-                  type="email"
-                  placeholder="VD: dothuha.ftu@gmail.com"
-                />
+                <label for="email">Email</label>
+                <input id="email" v-model="employeeData.Email" name="email" type="email" />
               </div>
             </div>
           </div>
           <div class="form-row">
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-bank-account">Tài khoản ngân hàng</label>
-                <input id="employee-bank-account" type="text" />
+                <label for="bankAccount">Tài khoản ngân hàng</label>
+                <input id="bankAccount" v-model="employeeData.BankAccount" name="bankAccount" type="text" />
               </div>
             </div>
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-bank-name">Tên ngân hàng</label>
-                <input id="employee-bank-name" type="text" />
+                <label for="bankName">Tên ngân hàng</label>
+                <input id="bankName" v-model="employeeData.BankName" name="bankName" type="text" />
               </div>
             </div>
             <div class="form-col">
               <div class="form-group">
-                <label for="employee-branch">Chi nhánh</label>
-                <input id="employee-branch" type="text" />
+                <label for="branch">Chi nhánh</label>
+                <input id="branch" v-model="employeeData.Branch" name="branch" type="text" />
               </div>
             </div>
           </div>
         </div>
         <div class="actions">
           <div class="cta-group">
-            <button type="button" class="cta-group__clear-btn">Huỷ</button>
+            <button type="button" class="cta-group__clear-btn" @click="resetEmployeeModal">Huỷ</button>
             <button type="submit" class="cta-group__submit-btn">Lưu</button>
           </div>
         </div>
@@ -209,12 +305,14 @@ const handleSubmit = () => {
   z-index: 10;
   background: rgba(0, 0, 0, 0.7);
 }
+
 .container {
   width: 100%;
   max-width: 1280px;
   background: #ffffff;
   border-radius: 4px;
 }
+
 .employee {
   display: flex;
   flex-direction: column;
@@ -222,6 +320,7 @@ const handleSubmit = () => {
   align-items: center;
   margin: 32px;
 }
+
 .header {
   width: 100%;
   display: flex;
@@ -252,6 +351,7 @@ const handleSubmit = () => {
     }
   }
 }
+
 .form-control {
   width: 100%;
   margin: 0 32px;
@@ -290,6 +390,7 @@ const handleSubmit = () => {
     }
   }
 }
+
 .actions {
   width: 100%;
   display: flex;
@@ -325,6 +426,7 @@ const handleSubmit = () => {
     }
   }
 }
+
 input:not([type='radio']),
 select {
   width: 100%;
@@ -334,9 +436,12 @@ select {
   border: 2px solid #e0e0e0;
   border-radius: 4px;
 }
+
 select {
+  padding: 0 8px;
   cursor: pointer;
 }
+
 input[type='radio'] {
   width: 16px;
   height: 16px;

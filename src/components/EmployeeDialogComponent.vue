@@ -1,4 +1,6 @@
 <script setup>
+import employeeApi from '@/apis/employee.api'
+
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -9,7 +11,7 @@ const props = defineProps({
     required: true
   }
 })
-const emit = defineEmits(['close-employee-dialog', 'show-toast'])
+const emit = defineEmits(['close-employee-dialog', 'show-toast', 'employee-deleted'])
 
 const closeEmployeeDialog = () => {
   emit('close-employee-dialog')
@@ -19,9 +21,20 @@ const showToast = (toastType, toastDesc) => {
   emit('show-toast', toastType, toastDesc)
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  await deleteEmployee(props.employee.EmployeeId)
+  emit('employee-deleted')
   closeEmployeeDialog()
-  showToast('success', 'Nhân viên đã bị xoá khỏi hệ thống')
+}
+
+const deleteEmployee = async (employeeId) => {
+  try {
+    await employeeApi.deleteEmployee(employeeId)
+    showToast('success', 'Nhân viên đã bị xoá khỏi hệ thống')
+  } catch (err) {
+    console.error(err)
+    showToast('error', 'Đã có lỗi xảy ra, vui lòng thử lại')
+  }
 }
 </script>
 
@@ -35,7 +48,7 @@ const handleSubmit = () => {
             <img src="../assets/icons/close.png" alt="close icon" />
           </button>
         </div>
-        <span class="desc">{{ `Bạn có chắc chắn muốn xóa nhân viên ${props.employee.id} không ?` }}</span>
+        <span class="desc">{{ `Bạn có chắc chắn muốn xóa nhân viên ${props.employee.EmployeeCode} không ?` }}</span>
         <form class="actions" @submit.prevent="handleSubmit">
           <div class="cta-group">
             <button type="button" class="cta-group__clear-btn" @click="closeEmployeeDialog">Không</button>
@@ -62,17 +75,20 @@ const handleSubmit = () => {
   background: rgba(0, 0, 0, 0.7);
   display: none;
 }
+
 .container {
   min-width: 450px;
   max-width: 650px;
   background: #ffffff;
   border-radius: 4px;
 }
+
 .dialog {
   display: flex;
   flex-direction: column;
   margin: 24px;
 }
+
 .header {
   width: 100%;
   display: flex;
@@ -102,9 +118,11 @@ const handleSubmit = () => {
     }
   }
 }
+
 .desc {
   margin: 24px 0;
 }
+
 .actions {
   width: 100%;
   display: flex;

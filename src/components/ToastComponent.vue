@@ -90,17 +90,21 @@ const closeToast = () => {
   transition:
     transform 0.3s ease-out,
     opacity 0.3s ease-out;
+
   &.slide-in {
     animation: slideIn 0.3s forwards;
   }
+
   &.slide-out {
     animation: slideOut 0.3s forwards;
   }
 }
+
 .container {
   display: flex;
   align-items: center;
 }
+
 .toast {
   display: flex;
   justify-content: space-between;
@@ -145,33 +149,41 @@ const closeToast = () => {
     }
   }
 }
+
 .info {
   color: #0062cc;
 }
+
 .success {
   color: #409330;
 }
+
 .warning {
   color: #cc7a00;
 }
+
 .error {
   color: #b80000;
 }
+
 @keyframes slideIn {
   from {
     transform: translateY(-100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
   }
 }
+
 @keyframes slideOut {
   from {
     transform: translateY(0);
     opacity: 1;
   }
+
   to {
     transform: translateY(-100%);
     opacity: 0;

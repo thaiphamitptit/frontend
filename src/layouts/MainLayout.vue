@@ -1,57 +1,53 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import SidebarComponent from '@/components/SidebarComponent.vue'
 import EmployeeModalComponent from '@/components/EmployeeModalComponent.vue'
 import EmployeeDialogComponent from '@/components/EmployeeDialogComponent.vue'
 import ToastComponent from '@/components/ToastComponent.vue'
+import employeeApi from '@/apis/employee.api'
 
 const isSidebarCollapsed = ref(false)
 const isEmployeeModalVisible = ref(false)
+const employeeModalMode = ref('add')
 const isEmployeeDialogVisible = ref(false)
-const selectedEmployee = ref({})
 const isToastVisible = ref(false)
 const toastType = ref('')
 const toastDesc = ref('')
 const toastDuration = ref(2000)
-const name = 'Đỗ Thu Hà'
-const dob = '06/19/2002'
-const gender = 'Nữ'
-const email = 'dothuha.ftu@gmail.com'
-const address = 'Phan Đình Phùng, Ba Đình, Hà Nội'
 const employees = ref([])
-for (let i = 1; i <= 1000; i++) {
-  employees.value.push({ id: `NV-${i}`, name, dob, gender, email, address })
-}
-const positions = ref([
-  { id: 1, name: '' },
-  { id: 2, name: 'Trưởng phòng' },
-  { id: 3, name: 'Nhân viên' }
-])
-const departments = ref([
-  { id: 1, name: '' },
-  { id: 2, name: 'Phòng nhân sự' },
-  { id: 3, name: 'Phòng tài chính, kế toán' },
-  { id: 4, name: 'Phòng marketing' },
-  { id: 5, name: 'Phòng kỹ thuật, công nghệ' }
-])
-const branchs = [
-  { id: 1, name: 'Chi nhánh Hà Nội' },
-  { id: 2, name: 'Chi nhánh Đà Nẵng' },
-  { id: 3, name: 'Chi nhánh TP HCM' }
-]
+const selectedEmployee = ref({})
 const limits = ref([10, 20, 50, 100])
+const branchs = [
+  { id: 0, name: 'Chi nhánh Hà Nội' },
+  { id: 1, name: 'Chi nhánh Đà Nẵng' },
+  { id: 2, name: 'Chi nhánh TP HCM' }
+]
+
+const fetchEmployees = async () => {
+  try {
+    const response = await employeeApi.getEmployees()
+    employees.value = response.data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+onMounted(() => {
+  fetchEmployees()
+})
 
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value
 }
 
 const showAddEmployeeModal = () => {
-  selectedEmployee.value = {}
+  employeeModalMode.value = 'add'
   isEmployeeModalVisible.value = true
 }
 
 const showUpdateEmployeeModal = (employee) => {
+  employeeModalMode.value = 'update'
   selectedEmployee.value = employee
   isEmployeeModalVisible.value = true
 }
@@ -100,17 +96,18 @@ const closeToast = () => {
     </div>
     <EmployeeModalComponent
       :visible="isEmployeeModalVisible"
+      :mode="employeeModalMode"
       :employee="selectedEmployee"
-      :departments="departments"
-      :positions="positions"
       @close-employee-modal="closeEmployeeModal"
       @show-toast="showToast"
+      @employee-updated="fetchEmployees"
     />
     <EmployeeDialogComponent
       :visible="isEmployeeDialogVisible"
       :employee="selectedEmployee"
       @close-employee-dialog="closeEmployeeDialog"
       @show-toast="showToast"
+      @employee-deleted="fetchEmployees"
     />
     <ToastComponent :visible="isToastVisible" :type="toastType" :desc="toastDesc" @close-toast="closeToast" />
   </div>
@@ -122,10 +119,12 @@ const closeToast = () => {
   flex-direction: column;
   align-items: center;
 }
+
 .container {
   width: 100%;
   display: flex;
 }
+
 .content {
   flex-grow: 1;
 }

@@ -85,20 +85,24 @@ const toggleSidebar = () => {
   background: #ffffff;
   box-shadow: 1px 1px 1px #e0e0e0;
 }
+
 .container {
   width: 200px;
   height: 100%;
   display: flex;
 }
+
 .collapsed {
   width: 100%;
 }
+
 .sidebar {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
+
 .sidebar-menu {
   margin: 12px;
 
@@ -170,6 +174,7 @@ const toggleSidebar = () => {
     }
   }
 }
+
 .collapse-btn {
   display: flex;
   align-items: center;

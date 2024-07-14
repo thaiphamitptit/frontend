@@ -50,17 +50,20 @@ const toggleSidebar = () => {
   display: flex;
   box-shadow: 0 1px 1px #e0e0e0;
 }
+
 .container {
   width: 100%;
   height: 100%;
   display: flex;
 }
+
 .header {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .navbar {
   display: flex;
   align-items: center;
@@ -105,6 +108,7 @@ const toggleSidebar = () => {
     cursor: pointer;
   }
 }
+
 .profile {
   display: flex;
   align-items: center;

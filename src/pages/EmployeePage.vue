@@ -58,7 +58,7 @@ const showDeleteEmployeeDialog = (employee) => {
           <div class="table-container">
             <table class="table">
               <thead>
-                <tr>
+                <tr class="table-row">
                   <th class="table-cell col-heading">STT</th>
                   <th class="table-cell col-heading">Mã NV</th>
                   <th class="table-cell col-heading">Họ và tên</th>
@@ -69,15 +69,17 @@ const showDeleteEmployeeDialog = (employee) => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(employee, index) in props.employees" :key="employee.id" class="table-row">
+                <tr v-for="(employee, index) in props.employees" :key="employee.EmployeeId" class="table-row">
                   <td class="table-cell col-data">{{ index + 1 }}</td>
-                  <td class="table-cell col-data">{{ employee.id }}</td>
-                  <td class="table-cell col-data">{{ employee.name }}</td>
-                  <td class="table-cell col-data">{{ employee.dob }}</td>
-                  <td class="table-cell col-data">{{ employee.gender }}</td>
-                  <td class="table-cell col-data">{{ employee.email }}</td>
+                  <td class="table-cell col-data">{{ employee.EmployeeCode }}</td>
+                  <td class="table-cell col-data">{{ employee.FullName }}</td>
+                  <td class="table-cell col-data">
+                    {{ employee.DateOfBirth }}
+                  </td>
+                  <td class="table-cell col-data">{{ employee.GenderName }}</td>
+                  <td class="table-cell col-data">{{ employee.Email }}</td>
                   <td class="table-cell col-group">
-                    {{ employee.address }}
+                    <span>{{ employee.Address }}</span>
                     <div class="cta-group">
                       <button class="cta-group__update-btn" @click="showUpdateEmployeeModal(employee)">
                         <img src="../assets/icons/pencil.png" alt="pencil icon" />
@@ -123,10 +125,12 @@ const showDeleteEmployeeDialog = (employee) => {
   background: #eeeeee;
   box-shadow: 0 1px 1px #e0e0e0;
 }
+
 .container {
   width: 100%;
   height: 100%;
 }
+
 .employees {
   height: calc(100% - 48px);
   display: flex;
@@ -134,6 +138,7 @@ const showDeleteEmployeeDialog = (employee) => {
   justify-content: space-between;
   margin: 24px;
 }
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -156,6 +161,7 @@ const showDeleteEmployeeDialog = (employee) => {
 
     &:hover {
       opacity: 0.8;
+
       img {
         transform: scale(1.2);
       }
@@ -181,6 +187,7 @@ const showDeleteEmployeeDialog = (employee) => {
     }
   }
 }
+
 .content {
   position: relative;
   display: flex;
@@ -283,6 +290,10 @@ const showDeleteEmployeeDialog = (employee) => {
     .table {
       border-collapse: collapse;
       width: 100%;
+    }
+
+    .table-row {
+      height: 40px;
     }
 
     .table-cell {
