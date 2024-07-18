@@ -74,12 +74,12 @@ const showDeleteEmployeeDialog = (employee) => {
                   <td class="table-cell col-data">{{ employee.EmployeeCode }}</td>
                   <td class="table-cell col-data">{{ employee.FullName }}</td>
                   <td class="table-cell col-data">
-                    {{ employee.DateOfBirth }}
+                    {{ employee.DateOfBirth ? employee.DateOfBirth.split('T')[0] : null }}
                   </td>
                   <td class="table-cell col-data">{{ employee.GenderName }}</td>
                   <td class="table-cell col-data">{{ employee.Email }}</td>
                   <td class="table-cell col-group">
-                    <span>{{ employee.Address }}</span>
+                    {{ employee.Address }}
                     <div class="cta-group">
                       <button class="cta-group__update-btn" @click="showUpdateEmployeeModal(employee)">
                         <img src="../assets/icons/pencil.png" alt="pencil icon" />
@@ -272,7 +272,6 @@ const showDeleteEmployeeDialog = (employee) => {
 
     &::-webkit-scrollbar {
       width: 6px;
-      height: 300px;
     }
 
     &::-webkit-scrollbar-track {
@@ -313,8 +312,6 @@ const showDeleteEmployeeDialog = (employee) => {
     .table-row {
       .col-group {
         position: relative;
-        display: flex;
-        align-items: center;
 
         .cta-group {
           display: none;
@@ -328,10 +325,13 @@ const showDeleteEmployeeDialog = (employee) => {
       &:hover .cta-group {
         position: absolute;
         right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
         display: flex;
         justify-content: space-between;
         align-items: center;
         column-gap: 4px;
+        z-index: 10;
         cursor: pointer;
 
         &__update-btn,

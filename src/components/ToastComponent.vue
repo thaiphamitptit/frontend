@@ -68,10 +68,10 @@ const closeToast = () => {
         <div class="toast__icon"><img :src="toasts[props.type].icon" :alt="toasts[props.type].alt" /></div>
         <span class="toast__messsage" :class="props.type">{{ toasts[props.type].message }}</span>
         <span class="toast__desc">{{ props.desc }}</span>
-        <button class="toast__close-btn" @click="closeToast">
-          <img src="../assets/icons/close.png" alt="close icon" />
-        </button>
       </div>
+      <button class="close-btn" @click="closeToast">
+        <img src="../assets/icons/close.png" alt="close icon" />
+      </button>
     </div>
   </div>
 </template>
@@ -81,8 +81,6 @@ const closeToast = () => {
   position: absolute;
   top: 24px;
   right: 24px;
-  min-width: 450px;
-  max-width: 650px;
   background: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
@@ -101,16 +99,18 @@ const closeToast = () => {
 }
 
 .container {
-  display: flex;
-  align-items: center;
-}
-
-.toast {
+  min-width: 450px;
+  max-width: 650px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 0 8px;
   padding: 8px 0;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
   column-gap: 8px;
 
   &__icon {
@@ -124,29 +124,24 @@ const closeToast = () => {
       height: 24px;
     }
   }
+}
 
-  &__message,
-  &__desc {
-    margin-left: 8px;
+.close-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: #ffffff;
+  cursor: pointer;
+
+  &:hover img {
+    transform: scale(1.2);
   }
 
-  &__close-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
-    background: #ffffff;
-    cursor: pointer;
-
-    &:hover img {
-      transform: scale(1.2);
-    }
-
-    img {
-      transition: transform 0.3s ease;
-      width: 24px;
-      height: 24px;
-    }
+  img {
+    transition: transform 0.3s ease;
+    width: 24px;
+    height: 24px;
   }
 }
 

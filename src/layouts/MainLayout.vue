@@ -98,6 +98,7 @@ const closeToast = () => {
       :visible="isEmployeeModalVisible"
       :mode="employeeModalMode"
       :employee="selectedEmployee"
+      :employees="employees"
       @close-employee-modal="closeEmployeeModal"
       @show-toast="showToast"
       @employee-updated="fetchEmployees"
