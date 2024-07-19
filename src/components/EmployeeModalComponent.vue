@@ -16,22 +16,7 @@ const props = defineProps({
   },
   employee: {
     type: Object,
-    default: () => ({
-      EmployeeCode: '',
-      FullName: '',
-      DateOfBirth: null,
-      Gender: 0,
-      IdentityNumber: '',
-      IdentityDate: null,
-      IdentityPlace: '',
-      Address: '',
-      PhoneNumber: '',
-      TelephoneNumber: '',
-      Email: '',
-      BankAccount: '',
-      BankName: '',
-      Branchs: ''
-    })
+    default: () => ({})
   },
   employees: {
     type: Array,
@@ -42,6 +27,7 @@ const emit = defineEmits(['close-employee-modal', 'show-toast', 'employee-update
 const formData = ref({})
 const departments = ref([])
 const positions = ref([])
+const employeeCode = ref('')
 const genders = ref([
   { id: 0, name: 'Nam' },
   { id: 1, name: 'Nữ' },
@@ -103,6 +89,15 @@ const formRules = ref({
   ]
 })
 
+const createNewEmployeeCode = async () => {
+  try {
+    const response = await employeeApi.createNewEmployeeCode()
+    employeeCode.value = response.data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 const fetchDepartment = async () => {
   try {
     const response = await departmentApi.getDepartments()
@@ -121,10 +116,11 @@ const fetchPosition = async () => {
   }
 }
 
-const resetEmployeeModal = () => {
+const resetEmployeeModal = async () => {
   if (props.mode === 'add') {
+    await createNewEmployeeCode()
     formData.value = {
-      EmployeeCode: '',
+      EmployeeCode: employeeCode.value,
       FullName: '',
       DateOfBirth: null,
       Gender: 0,
@@ -150,14 +146,16 @@ const getEmployeeCodes = () => {
 }
 
 onMounted(() => {
+  createNewEmployeeCode()
+  resetEmployeeModal()
   fetchDepartment()
   fetchPosition()
-  resetEmployeeModal()
 })
 
 watch(() => props.mode, resetEmployeeModal)
 watch(() => props.employee, resetEmployeeModal, { immediate: true })
 watch(() => props.employees, getEmployeeCodes, { immediate: true })
+watch(() => props.employees, createNewEmployeeCode, { immediate: true })
 
 const closeEmployeeModal = () => {
   resetEmployeeModal()

@@ -14,7 +14,6 @@ const isEmployeeDialogVisible = ref(false)
 const isToastVisible = ref(false)
 const toastType = ref('')
 const toastDesc = ref('')
-const toastDuration = ref(2000)
 const employees = ref([])
 const selectedEmployee = ref({})
 const limits = ref([10, 20, 50, 100])
@@ -63,7 +62,7 @@ const showToast = (type, desc) => {
   toastDesc.value = desc
   setTimeout(() => {
     isToastVisible.value = false
-  }, toastDuration.value)
+  }, 2000)
 }
 
 const closeEmployeeModal = () => {

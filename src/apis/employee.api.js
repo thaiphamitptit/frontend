@@ -3,6 +3,9 @@ import axiosInstance from '@/plugins/axios'
 const url = '/Employees'
 
 const employeeApi = {
+  createNewEmployeeCode() {
+    return axiosInstance.get(`${url}/NewEmployeeCode`)
+  },
   getEmployees() {
     return axiosInstance.get(url)
   },

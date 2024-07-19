@@ -1,4 +1,6 @@
 <script setup>
+import { ref, watch } from 'vue'
+
 const props = defineProps({
   employees: {
     type: Array,
@@ -10,7 +12,27 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['show-add-employee-modal', 'show-update-employee-modal', 'show-delete-employee-dialog'])
+const emit = defineEmits([
+  'show-add-employee-modal',
+  'show-update-employee-modal',
+  'show-delete-employee-dialog',
+  'search-employees'
+])
+const isLoading = ref(false)
+
+const toggleStatus = () => {
+  if (props.employees.length === 0) {
+    isLoading.value = true
+  } else {
+    isLoading.value = false
+  }
+}
+
+watch(() => props.employees, toggleStatus, { immediate: true })
+
+const handleSubmit = async () => {
+  emit('search-employees')
+}
 
 const showAddEmployeeModal = () => {
   emit('show-add-employee-modal')
@@ -39,11 +61,11 @@ const showDeleteEmployeeDialog = (employee) => {
         <div class="content">
           <div class="toolbars">
             <div class="quick-filters">
-              <form class="search-form">
+              <form class="search-form" @submit.prevent="handleSubmit">
                 <input type="text" class="search-form__input" placeholder="Tìm kiếm theo mã, họ tên" />
-                <div class="search-form__icon">
+                <button class="search-form__icon">
                   <img src="../assets/icons/search.png" alt="search icon" />
-                </div>
+                </button>
               </form>
             </div>
             <div class="actions-bar">
@@ -69,7 +91,26 @@ const showDeleteEmployeeDialog = (employee) => {
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(employee, index) in props.employees" :key="employee.EmployeeId" class="table-row">
+                <tr
+                  v-for="rows in Array.from({ length: 100 }, (_, index) => index + 1)"
+                  v-show="isLoading"
+                  :key="rows"
+                  class="table-row"
+                >
+                  <td
+                    v-for="cols in Array.from({ length: 7 }, (_, index) => index + 1)"
+                    :key="cols"
+                    class="table-cell col-data"
+                  >
+                    <div class="skeleton"></div>
+                  </td>
+                </tr>
+                <tr
+                  v-for="(employee, index) in props.employees"
+                  v-show="!isLoading"
+                  :key="employee.EmployeeId"
+                  class="table-row"
+                >
                   <td class="table-cell col-data">{{ index + 1 }}</td>
                   <td class="table-cell col-data">{{ employee.EmployeeCode }}</td>
                   <td class="table-cell col-data">{{ employee.FullName }}</td>
@@ -224,7 +265,8 @@ const showDeleteEmployeeDialog = (employee) => {
           top: 50%;
           right: 0px;
           transform: translateY(-50%);
-          pointer-events: none;
+          background: none;
+          cursor: pointer;
 
           img {
             width: 20px;
@@ -300,6 +342,13 @@ const showDeleteEmployeeDialog = (employee) => {
       padding: 0 12px;
       text-align: left;
       border: 1px solid #e0e0e0;
+
+      .skeleton {
+        width: 100%;
+        height: 16px;
+        background: #eeeeee;
+        border-radius: 4px;
+      }
     }
 
     .col-heading {
