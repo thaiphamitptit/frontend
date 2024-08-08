@@ -1,12 +1,11 @@
 import axios from 'axios'
 
-const baseUrl = 'https://cukcuk.manhnv.net/api/v1'
+const baseUrl = 'http://localhost:5000/api/v1'
 
 class Axios {
   constructor() {
     this.instance = axios.create({
       baseURL: baseUrl,
-      // timeout: 10000,
       headers: {
         'Content-Type': 'application/json'
       }

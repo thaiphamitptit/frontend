@@ -4,10 +4,15 @@ const url = '/Employees'
 
 const employeeApi = {
   createNewEmployeeCode() {
-    return axiosInstance.get(`${url}/NewEmployeeCode`)
+    return axiosInstance.get(`${url}/newEmployeeCode`)
   },
   getEmployees() {
     return axiosInstance.get(url)
+  },
+  getFilteredEmployees(params) {
+    return axiosInstance.get(`${url}/filter`, {
+      params
+    })
   },
   addEmployee(body) {
     return axiosInstance.post(url, body)

@@ -14,9 +14,12 @@ const isEmployeeDialogVisible = ref(false)
 const isToastVisible = ref(false)
 const toastType = ref('')
 const toastDesc = ref('')
+const allEmployees = ref([])
 const employees = ref([])
+const totalPages = ref(1)
+const totalRecords = ref(0)
 const selectedEmployee = ref({})
-const limits = ref([10, 20, 50, 100])
+const limits = ref([20, 50, 100])
 const branchs = [
   { id: 0, name: 'Chi nhánh Hà Nội' },
   { id: 1, name: 'Chi nhánh Đà Nẵng' },
@@ -26,7 +29,18 @@ const branchs = [
 const fetchEmployees = async () => {
   try {
     const response = await employeeApi.getEmployees()
-    employees.value = response.data
+    allEmployees.value = response.data.metadata.employees
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const filterEmployees = async (employeeQueryParams) => {
+  try {
+    const response = await employeeApi.getFilteredEmployees(employeeQueryParams)
+    employees.value = response.data.metadata.employees
+    totalPages.value = response.data.metadata.totalPages
+    totalRecords.value = response.data.metadata.totalRecords
   } catch (err) {
     console.log(err)
   }
@@ -34,6 +48,7 @@ const fetchEmployees = async () => {
 
 onMounted(() => {
   fetchEmployees()
+  filterEmployees()
 })
 
 const toggleSidebar = () => {
@@ -87,6 +102,9 @@ const closeToast = () => {
         <router-view
           :employees="employees"
           :limits="limits"
+          :total-pages="totalPages"
+          :total-records="totalRecords"
+          @filter-employees="filterEmployees"
           @show-add-employee-modal="showAddEmployeeModal"
           @show-update-employee-modal="showUpdateEmployeeModal"
           @show-delete-employee-dialog="showDeleteEmployeeDialog"
@@ -97,17 +115,18 @@ const closeToast = () => {
       :visible="isEmployeeModalVisible"
       :mode="employeeModalMode"
       :employee="selectedEmployee"
+      :all-employees="allEmployees"
       :employees="employees"
       @close-employee-modal="closeEmployeeModal"
       @show-toast="showToast"
-      @employee-updated="fetchEmployees"
+      @employee-updated="filterEmployees"
     />
     <EmployeeDialogComponent
       :visible="isEmployeeDialogVisible"
       :employee="selectedEmployee"
       @close-employee-dialog="closeEmployeeDialog"
       @show-toast="showToast"
-      @employee-deleted="fetchEmployees"
+      @employee-deleted="filterEmployees"
     />
     <ToastComponent :visible="isToastVisible" :type="toastType" :desc="toastDesc" @close-toast="closeToast" />
   </div>

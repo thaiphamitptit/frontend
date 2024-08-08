@@ -20,7 +20,12 @@ const routes = [
       },
       {
         path: 'employees',
-        component: EmployeePage
+        component: EmployeePage,
+        props: (route) => ({
+          employeeFilter: route.query.employeeFilter || '',
+          pageSize: Number(route.query.pageSize) || 10,
+          pageNumber: Number(route.query.pageNumber) || 1
+        })
       },
       {
         path: 'settings',

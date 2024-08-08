@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps({
   employees: {
@@ -9,6 +10,14 @@ const props = defineProps({
   limits: {
     type: Array,
     required: true
+  },
+  totalPages: {
+    type: Number,
+    required: true
+  },
+  totalRecords: {
+    type: Number,
+    required: true
   }
 })
 
@@ -16,22 +25,58 @@ const emit = defineEmits([
   'show-add-employee-modal',
   'show-update-employee-modal',
   'show-delete-employee-dialog',
-  'search-employees'
+  'filter-employees'
 ])
+const router = useRouter()
+const route = useRoute()
+
 const isLoading = ref(false)
+const employeeFilter = ref(route.query.employeeFilter || '')
+const pageSize = ref(Number(route.query.pageSize) || props.limits[0])
+const pageNumber = ref(Number(route.query.pageNumber) || 1)
+
+const employeeQueryParams = ref({
+  employeeFilter: employeeFilter.value,
+  pageSize: pageSize.value,
+  pageNumber: pageNumber.value
+})
 
 const toggleStatus = () => {
-  if (props.employees.length === 0) {
+  if (props.totalRecords === 0) {
     isLoading.value = true
   } else {
     isLoading.value = false
   }
 }
 
-watch(() => props.employees, toggleStatus, { immediate: true })
+const handleSubmit = () => {
+  employeeQueryParams.value.employeeFilter = employeeFilter.value
+  employeeQueryParams.value.pageNumber = 1
+  updateEmployeeQueryParams()
+}
 
-const handleSubmit = async () => {
-  emit('search-employees')
+const handleChangePageSize = () => {
+  employeeQueryParams.value.pageSize = pageSize.value
+  employeeQueryParams.value.pageNumber = 1
+  updateEmployeeQueryParams()
+}
+
+const handleChangePageNumber = (direction) => {
+  if (direction === 'prev' && pageNumber.value > 1) {
+    pageNumber.value -= 1
+  }
+  if (direction === 'next' && pageNumber.value < props.totalPages) {
+    pageNumber.value += 1
+  }
+  employeeQueryParams.value.pageNumber = pageNumber.value
+  updateEmployeeQueryParams()
+}
+
+const updateEmployeeQueryParams = () => {
+  const newEmployeeQueryParams = { ...employeeQueryParams.value }
+  emit('filter-employees', newEmployeeQueryParams)
+  router.push({ query: newEmployeeQueryParams })
+  employeeFilter.value = ''
 }
 
 const showAddEmployeeModal = () => {
@@ -45,6 +90,25 @@ const showUpdateEmployeeModal = (employee) => {
 const showDeleteEmployeeDialog = (employee) => {
   emit('show-delete-employee-dialog', employee)
 }
+
+watch(() => props.employees, toggleStatus, { immediate: true })
+
+watch([pageSize, pageNumber], () => {
+  employeeQueryParams.value.pageSize = pageSize.value
+  employeeQueryParams.value.pageNumber = pageNumber.value
+  updateEmployeeQueryParams()
+})
+
+watch(
+  () => route.query,
+  (newQuery) => {
+    employeeFilter.value = newQuery.employeeFilter || employeeFilter.value
+    pageSize.value = Number(newQuery.pageSize) || pageSize.value
+    pageNumber.value = Number(newQuery.pageNumber) || pageNumber.value
+    updateEmployeeQueryParams()
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -62,7 +126,12 @@ const showDeleteEmployeeDialog = (employee) => {
           <div class="toolbars">
             <div class="quick-filters">
               <form class="search-form" @submit.prevent="handleSubmit">
-                <input type="text" class="search-form__input" placeholder="Tìm kiếm theo mã, họ tên" />
+                <input
+                  v-model="employeeFilter"
+                  type="text"
+                  class="search-form__input"
+                  placeholder="Tìm kiếm theo mã, họ tên"
+                />
                 <button class="search-form__icon">
                   <img src="../assets/icons/search.png" alt="search icon" />
                 </button>
@@ -92,7 +161,7 @@ const showDeleteEmployeeDialog = (employee) => {
               </thead>
               <tbody>
                 <tr
-                  v-for="rows in Array.from({ length: 100 }, (_, index) => index + 1)"
+                  v-for="rows in Array.from({ length: 20 }, (_, index) => index + 1)"
                   v-show="isLoading"
                   :key="rows"
                   class="table-row"
@@ -108,19 +177,19 @@ const showDeleteEmployeeDialog = (employee) => {
                 <tr
                   v-for="(employee, index) in props.employees"
                   v-show="!isLoading"
-                  :key="employee.EmployeeId"
+                  :key="employee.employeeId"
                   class="table-row"
                 >
                   <td class="table-cell col-data">{{ index + 1 }}</td>
-                  <td class="table-cell col-data">{{ employee.EmployeeCode }}</td>
-                  <td class="table-cell col-data">{{ employee.FullName }}</td>
+                  <td class="table-cell col-data">{{ employee.employeeCode }}</td>
+                  <td class="table-cell col-data">{{ employee.fullName }}</td>
                   <td class="table-cell col-data">
-                    {{ employee.DateOfBirth ? employee.DateOfBirth.split('T')[0] : null }}
+                    {{ employee.dateOfBirth ? employee.dateOfBirth.split('T')[0] : null }}
                   </td>
-                  <td class="table-cell col-data">{{ employee.GenderName }}</td>
-                  <td class="table-cell col-data">{{ employee.Email }}</td>
+                  <td class="table-cell col-data">{{ employee.gender }}</td>
+                  <td class="table-cell col-data">{{ employee.email }}</td>
                   <td class="table-cell col-group">
-                    {{ employee.Address }}
+                    {{ employee.address }}
                     <div class="cta-group">
                       <button class="cta-group__update-btn" @click="showUpdateEmployeeModal(employee)">
                         <img src="../assets/icons/pencil.png" alt="pencil icon" />
@@ -138,17 +207,17 @@ const showDeleteEmployeeDialog = (employee) => {
             </table>
           </div>
           <div class="pagination">
-            <span class="summary">{{ `Tổng: ${props.employees.length}` }}</span>
+            <span class="summary">{{ `Tổng: ${props.totalRecords}` }}</span>
             <div class="actions">
               <label for="limit">Số bản ghi/trang</label>
-              <select id="limit" name="limit" class="custom-select">
+              <select id="limit" v-model="pageSize" name="limit" class="custom-select" @change="handleChangePageSize">
                 <option v-for="limit in props.limits" :key="limit" :value="limit">{{ limit }}</option>
               </select>
               <div class="cta-group">
-                <div class="cta-group__prev-page-btn">
+                <div class="cta-group__prev-page-btn" @click="handleChangePageNumber('prev')">
                   <img src="../assets/icons/btn-prev-page.svg" alt="prev page icon" />
                 </div>
-                <div class="cta-group__next-page-btn">
+                <div class="cta-group__next-page-btn" @click="handleChangePageNumber('next')">
                   <img src="../assets/icons/btn-next-page.svg" alt="next page icon" />
                 </div>
               </div>

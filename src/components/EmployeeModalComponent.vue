@@ -18,6 +18,10 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
+  allEmployees: {
+    type: Array,
+    required: true
+  },
   employees: {
     type: Array,
     required: true
@@ -36,7 +40,7 @@ const genders = ref([
 const errors = ref({})
 const isFormValid = ref(false)
 const formRules = ref({
-  EmployeeCode: [
+  employeeCode: [
     {
       ruleName: 'required',
       errorMessage: 'Mã nhân viên không được để trống'
@@ -44,34 +48,34 @@ const formRules = ref({
     {
       ruleName: 'isUnique',
       errorMessage: 'Mã nhân viên đã tồn tại',
-      arrayValues: props.employees.map((employee) => employee.EmployeeCode)
+      arrayValues: props.allEmployees.map((employee) => employee.employeeCode)
     }
   ],
-  FullName: [
+  fullName: [
     {
       ruleName: 'required',
       errorMessage: 'Họ tên không được để trống'
     }
   ],
-  DateOfBirth: [
+  dateOfBirth: [
     {
       ruleName: 'isDateValid',
       errorMessage: 'Ngày sinh không hợp lệ'
     }
   ],
-  IdentityNumber: [
+  identityNumber: [
     {
       ruleName: 'required',
       errorMessage: 'Số CMTND không được để trống'
     }
   ],
-  IdentityDate: [
+  identityDate: [
     {
       ruleName: 'isDateValid',
       errorMessage: 'Ngày cấp CMTND không hợp lệ'
     }
   ],
-  Email: [
+  email: [
     {
       ruleName: 'required',
       errorMessage: 'Email không được để trống'
@@ -81,7 +85,7 @@ const formRules = ref({
       errorMessage: 'Email không hợp lệ'
     }
   ],
-  PhoneNumber: [
+  phoneNumber: [
     {
       ruleName: 'required',
       errorMessage: 'Số điện thoại không được để trống'
@@ -92,25 +96,25 @@ const formRules = ref({
 const createNewEmployeeCode = async () => {
   try {
     const response = await employeeApi.createNewEmployeeCode()
-    employeeCode.value = response.data
+    employeeCode.value = response.data.metadata.employeeCode
   } catch (err) {
     console.log(err)
   }
 }
 
-const fetchDepartment = async () => {
+const fetchDepartments = async () => {
   try {
     const response = await departmentApi.getDepartments()
-    departments.value = response.data
+    departments.value = response.data.metadata.departments
   } catch (err) {
     console.log(err)
   }
 }
 
-const fetchPosition = async () => {
+const fetchPositions = async () => {
   try {
     const response = await positionApi.getPositions()
-    positions.value = response.data
+    positions.value = response.data.metadata.positions
   } catch (err) {
     console.log(err)
   }
@@ -120,21 +124,18 @@ const resetEmployeeModal = async () => {
   if (props.mode === 'add') {
     await createNewEmployeeCode()
     formData.value = {
-      EmployeeCode: employeeCode.value,
-      FullName: '',
-      DateOfBirth: null,
-      Gender: 0,
-      IdentityNumber: '',
-      IdentityDate: null,
-      IdentityPlace: '',
-      Address: '',
-      PhoneNumber: ''
+      employeeCode: employeeCode.value,
+      gender: 0,
+      dateOfBirth: null,
+      identityDate: null,
+      departmentId: departments.value[0].departmentId,
+      positionId: positions.value[0].positionId
     }
   } else {
     formData.value = {
       ...props.employee,
-      DateOfBirth: props.employee.DateOfBirth ? props.employee.DateOfBirth.split('T')[0] : null,
-      IdentityDate: props.employee.IdentityDate ? props.employee.IdentityDate.split('T')[0] : null
+      dateOfBirth: props.employee.dateOfBirth ? props.employee.dateOfBirth.split('T')[0] : null,
+      identityDate: props.employee.identityDate ? props.employee.identityDate.split('T')[0] : null
     }
   }
   errors.value = {}
@@ -142,19 +143,37 @@ const resetEmployeeModal = async () => {
 }
 
 const getEmployeeCodes = () => {
-  formRules.value.EmployeeCode[1].arrayValues = props.employees.map((employee) => employee.EmployeeCode)
+  formRules.value.employeeCode[1].arrayValues = props.allEmployees.map((employee) => employee.employeeCode)
 }
 
 onMounted(() => {
+  fetchDepartments()
+  fetchPositions()
   createNewEmployeeCode()
   resetEmployeeModal()
-  fetchDepartment()
-  fetchPosition()
 })
+
+watch(
+  () => positions.value,
+  (newPositions) => {
+    if (newPositions.length > 0 && props.mode === 'add') {
+      formData.value.positionId = newPositions[0].positionId
+    }
+  }
+)
+
+watch(
+  () => departments.value,
+  (newDepartments) => {
+    if (newDepartments.length > 0 && props.mode === 'add') {
+      formData.value.departmentId = newDepartments[0].departmentId
+    }
+  }
+)
 
 watch(() => props.mode, resetEmployeeModal)
 watch(() => props.employee, resetEmployeeModal, { immediate: true })
-watch(() => props.employees, getEmployeeCodes, { immediate: true })
+watch(() => props.allEmployees, getEmployeeCodes, { immediate: true })
 watch(() => props.employees, createNewEmployeeCode, { immediate: true })
 
 const closeEmployeeModal = () => {
@@ -179,7 +198,7 @@ const handleSubmit = async () => {
     if (props.mode === 'add') {
       await addEmployee(formData.value)
     } else {
-      await updateEmployee(props.employee.EmployeeId, formData.value)
+      await updateEmployee(props.employee.employeeId, formData.value)
     }
     emit('employee-updated')
     closeEmployeeModal()
@@ -225,27 +244,27 @@ const updateEmployee = async (employeeId, body) => {
                 <span class="icon">*</span>
                 <input
                   id="employeeCode"
-                  v-model="formData.EmployeeCode"
-                  :class="[{ error: errors.EmployeeCode }, { valid: !errors.EmployeeCode && formData.EmployeeCode }]"
+                  v-model="formData.employeeCode"
+                  :class="[{ error: errors.employeeCode }, { valid: !errors.employeeCode && formData.employeeCode }]"
                   name="employeeCode"
                   type="text"
                   autofocus
-                  @blur="handleBlur('EmployeeCode')"
+                  @blur="handleBlur('employeeCode')"
                 />
-                <span class="error-message">{{ errors.EmployeeCode }}</span>
+                <span class="error-message">{{ errors.employeeCode }}</span>
               </div>
               <div class="form-group">
                 <label for="fullName">Họ và tên</label>
                 <span class="icon">*</span>
                 <input
                   id="fullName"
-                  v-model="formData.FullName"
-                  :class="[{ error: errors.FullName }, { valid: !errors.FullName && formData.FullName }]"
+                  v-model="formData.fullName"
+                  :class="[{ error: errors.fullName }, { valid: !errors.fullName && formData.fullName }]"
                   name="fullName"
                   type="text"
-                  @blur="handleBlur('FullName')"
+                  @blur="handleBlur('fullName')"
                 />
-                <span v-show="errors.FullName" class="error-message">{{ errors.FullName }}</span>
+                <span v-show="errors.fullName" class="error-message">{{ errors.fullName }}</span>
               </div>
             </div>
             <div class="form-col">
@@ -253,23 +272,23 @@ const updateEmployee = async (employeeId, body) => {
                 <label for="dateOfBirth">Ngày sinh</label>
                 <input
                   id="dateOfBirth"
-                  v-model="formData.DateOfBirth"
-                  :class="[{ error: errors.DateOfBirth }, { valid: !errors.DateOfBirth && formData.DateOfBirth }]"
+                  v-model="formData.dateOfBirth"
+                  :class="[{ error: errors.dateOfBirth }, { valid: !errors.dateOfBirth && formData.dateOfBirth }]"
                   name="dateOfBirth"
                   type="date"
-                  @blur="handleBlur('DateOfBirth')"
+                  @blur="handleBlur('dateOfBirth')"
                 />
-                <span v-show="errors.DateOfBirth" class="error-message">{{ errors.DateOfBirth }}</span>
+                <span v-show="errors.dateOfBirth" class="error-message">{{ errors.dateOfBirth }}</span>
               </div>
               <div class="form-group">
                 <label for="gender">Giới tính</label>
                 <div class="input-group">
                   <div v-for="gender in genders" :key="gender.id" class="input-group__item">
-                    <input :id="gender.id" v-model="formData.Gender" :value="gender.id" name="gender" type="radio" />
+                    <input :id="gender.id" v-model="formData.gender" :value="gender.id" name="gender" type="radio" />
                     <label :for="gender.id">{{ gender.name }}</label>
                   </div>
                 </div>
-                <span v-show="errors.Gender" class="error-message">{{ errors.Gender }}</span>
+                <span v-show="errors.gender" class="error-message">{{ errors.gender }}</span>
               </div>
             </div>
           </div>
@@ -277,9 +296,9 @@ const updateEmployee = async (employeeId, body) => {
             <div class="form-col">
               <div class="form-group">
                 <label for="positionId">Vị trí</label>
-                <select id="positionId" v-model="formData.PositionId" name="positionId" class="custom-select">
-                  <option v-for="position in positions" :key="position.PositionId" :value="position.PositionId">
-                    {{ position.PositionName }}
+                <select id="positionId" v-model="formData.positionId" name="positionId" class="custom-select">
+                  <option v-for="position in positions" :key="position.positionId" :value="position.positionId">
+                    {{ position.positionName }}
                   </option>
                 </select>
               </div>
@@ -290,28 +309,28 @@ const updateEmployee = async (employeeId, body) => {
                 <span class="icon">*</span>
                 <input
                   id="identityNumber"
-                  v-model="formData.IdentityNumber"
+                  v-model="formData.identityNumber"
                   :class="[
-                    { error: errors.IdentityNumber },
-                    { valid: !errors.IdentityNumber && formData.IdentityNumber }
+                    { error: errors.identityNumber },
+                    { valid: !errors.identityNumber && formData.identityNumber }
                   ]"
                   name="identityNumber"
                   type="text"
-                  @blur="handleBlur('IdentityNumber')"
+                  @blur="handleBlur('identityNumber')"
                 />
-                <span v-show="errors.IdentityNumber" class="error-message">{{ errors.IdentityNumber }}</span>
+                <span v-show="errors.identityNumber" class="error-message">{{ errors.identityNumber }}</span>
               </div>
               <div class="form-group">
                 <label for="identityDate">Ngày cấp</label>
                 <input
                   id="identityDate"
-                  v-model="formData.IdentityDate"
-                  :class="[{ error: errors.IdentityDate }, { valid: !errors.IdentityDate && formData.IdentityDate }]"
+                  v-model="formData.identityDate"
+                  :class="[{ error: errors.identityDate }, { valid: !errors.identityDate && formData.identityDate }]"
                   name="identityDate"
                   type="date"
-                  @blur="handleBlur('IdentityDate')"
+                  @blur="handleBlur('identityDate')"
                 />
-                <span v-show="errors.IdentityDate" class="error-message">{{ errors.IdentityDate }}</span>
+                <span v-show="errors.identityDate" class="error-message">{{ errors.identityDate }}</span>
               </div>
             </div>
           </div>
@@ -319,13 +338,13 @@ const updateEmployee = async (employeeId, body) => {
             <div class="form-col">
               <div class="form-group">
                 <label for="departmentId">Phòng ban</label>
-                <select id="departmentId" v-model="formData.DepartmentId" name="departmentId" class="custom-select">
+                <select id="departmentId" v-model="formData.departmentId" name="departmentId" class="custom-select">
                   <option
                     v-for="department in departments"
-                    :key="department.DepartmentId"
-                    :value="department.DepartmentId"
+                    :key="department.departmentId"
+                    :value="department.departmentId"
                   >
-                    {{ department.DepartmentName }}
+                    {{ department.departmentName }}
                   </option>
                 </select>
               </div>
@@ -335,13 +354,13 @@ const updateEmployee = async (employeeId, body) => {
                 <label for="identityPlace">Nơi cấp</label>
                 <input
                   id="identityPlace"
-                  v-model="formData.IdentityPlace"
-                  :class="[{ error: errors.IdentityPlace }, { valid: !errors.IdentityPlace && formData.IdentityPlace }]"
+                  v-model="formData.identityPlace"
+                  :class="[{ error: errors.identityPlace }, { valid: !errors.identityPlace && formData.identityPlace }]"
                   name="identityPlace"
                   type="text"
-                  @blur="handleBlur('IdentityPlace')"
+                  @blur="handleBlur('identityPlace')"
                 />
-                <span v-show="errors.IdentityPlace" class="error-message">{{ errors.IdentityPlace }}</span>
+                <span v-show="errors.identityPlace" class="error-message">{{ errors.identityPlace }}</span>
               </div>
             </div>
           </div>
@@ -351,13 +370,13 @@ const updateEmployee = async (employeeId, body) => {
                 <label for="address">Địa chỉ</label>
                 <input
                   id="address"
-                  v-model="formData.Address"
-                  :class="[{ error: errors.Address }, { valid: !errors.Address && formData.Address }]"
+                  v-model="formData.address"
+                  :class="[{ error: errors.address }, { valid: !errors.address && formData.address }]"
                   name="address"
                   type="text"
-                  @blur="handleBlur('Address')"
+                  @blur="handleBlur('address')"
                 />
-                <span v-show="errors.Address" class="error-message">{{ errors.Address }}</span>
+                <span v-show="errors.address" class="error-message">{{ errors.address }}</span>
               </div>
             </div>
           </div>
@@ -368,13 +387,13 @@ const updateEmployee = async (employeeId, body) => {
                 <span class="icon">*</span>
                 <input
                   id="phoneNumber"
-                  v-model="formData.PhoneNumber"
-                  :class="[{ error: errors.PhoneNumber }, { valid: !errors.PhoneNumber && formData.PhoneNumber }]"
+                  v-model="formData.phoneNumber"
+                  :class="[{ error: errors.phoneNumber }, { valid: !errors.phoneNumber && formData.phoneNumber }]"
                   name="phoneNumber"
                   type="text"
-                  @blur="handleBlur('PhoneNumber')"
+                  @blur="handleBlur('phoneNumber')"
                 />
-                <span v-show="errors.PhoneNumber" class="error-message">{{ errors.PhoneNumber }}</span>
+                <span v-show="errors.phoneNumber" class="error-message">{{ errors.phoneNumber }}</span>
               </div>
             </div>
             <div class="form-col">
@@ -382,16 +401,16 @@ const updateEmployee = async (employeeId, body) => {
                 <label for="telephoneNumber">ĐT Cố định</label>
                 <input
                   id="telephoneNumber"
-                  v-model="formData.TelephoneNumber"
+                  v-model="formData.telephoneNumber"
                   :class="[
-                    { error: errors.TelephoneNumber },
-                    { valid: !errors.TelephoneNumber && formData.TelephoneNumber }
+                    { error: errors.telephoneNumber },
+                    { valid: !errors.telephoneNumber && formData.telephoneNumber }
                   ]"
                   name="telephoneNumber"
                   type="text"
-                  @blur="handleBlur('TelephoneNumber')"
+                  @blur="handleBlur('telephoneNumber')"
                 />
-                <span v-show="errors.TelephoneNumber" class="error-message">{{ errors.TelephoneNumber }}</span>
+                <span v-show="errors.telephoneNumber" class="error-message">{{ errors.telephoneNumber }}</span>
               </div>
             </div>
             <div class="form-col">
@@ -400,13 +419,13 @@ const updateEmployee = async (employeeId, body) => {
                 <span class="icon">*</span>
                 <input
                   id="email"
-                  v-model="formData.Email"
-                  :class="[{ error: errors.Email }, { valid: !errors.Email && formData.Email }]"
+                  v-model="formData.email"
+                  :class="[{ error: errors.email }, { valid: !errors.email && formData.email }]"
                   name="email"
                   type="email"
-                  @blur="handleBlur('Email')"
+                  @blur="handleBlur('email')"
                 />
-                <span v-show="errors.Email" class="error-message">{{ errors.Email }}</span>
+                <span v-show="errors.email" class="error-message">{{ errors.email }}</span>
               </div>
             </div>
           </div>
@@ -416,13 +435,13 @@ const updateEmployee = async (employeeId, body) => {
                 <label for="bankAccount">Tài khoản ngân hàng</label>
                 <input
                   id="bankAccount"
-                  v-model="formData.BankAccount"
-                  :class="[{ error: errors.BankAccount }, { valid: !errors.BankAccount && formData.BankAccount }]"
+                  v-model="formData.bankAccount"
+                  :class="[{ error: errors.bankAccount }, { valid: !errors.bankAccount && formData.bankAccount }]"
                   name="bankAccount"
                   type="text"
-                  @blur="handleBlur('BankAccount')"
+                  @blur="handleBlur('bankAccount')"
                 />
-                <span v-show="errors.BankAccount" class="error-message">{{ errors.BankAccount }}</span>
+                <span v-show="errors.bankAccount" class="error-message">{{ errors.bankAccount }}</span>
               </div>
             </div>
             <div class="form-col">
@@ -430,27 +449,27 @@ const updateEmployee = async (employeeId, body) => {
                 <label for="bankName">Tên ngân hàng</label>
                 <input
                   id="bankName"
-                  v-model="formData.BankName"
-                  :class="[{ error: errors.BankName }, { valid: !errors.BankName && formData.BankName }]"
+                  v-model="formData.bankName"
+                  :class="[{ error: errors.bankName }, { valid: !errors.bankName && formData.bankName }]"
                   name="bankName"
                   type="text"
-                  @blur="handleBlur('BankName')"
+                  @blur="handleBlur('bankName')"
                 />
-                <span v-show="errors.BankName" class="error-message">{{ errors.BankName }}</span>
+                <span v-show="errors.bankName" class="error-message">{{ errors.bankName }}</span>
               </div>
             </div>
             <div class="form-col">
               <div class="form-group">
-                <label for="branchs">Chi nhánh</label>
+                <label for="branch">Chi nhánh</label>
                 <input
                   id="branchs"
-                  v-model="formData.Branchs"
-                  :class="[{ error: errors.Branchs }, { valid: !errors.Branchs && formData.Branchs }]"
+                  v-model="formData.branch"
+                  :class="[{ error: errors.branch }, { valid: !errors.branch && formData.branch }]"
                   name="branchs"
                   type="text"
-                  @blur="handleBlur('Branchs')"
+                  @blur="handleBlur('branch')"
                 />
-                <span v-show="errors.Branchs" class="error-message">{{ errors.Branchs }}</span>
+                <span v-show="errors.branch" class="error-message">{{ errors.branch }}</span>
               </div>
             </div>
           </div>

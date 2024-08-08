@@ -22,7 +22,7 @@ const showToast = (toastType, toastDesc) => {
 }
 
 const handleSubmit = async () => {
-  await deleteEmployee(props.employee.EmployeeId)
+  await deleteEmployee(props.employee.employeeId)
   emit('employee-deleted')
   closeEmployeeDialog()
 }
@@ -48,7 +48,7 @@ const deleteEmployee = async (employeeId) => {
             <img src="../assets/icons/close.png" alt="close icon" />
           </button>
         </div>
-        <span class="desc">{{ `Bạn có chắc chắn muốn xóa nhân viên ${props.employee.EmployeeCode} không ?` }}</span>
+        <span class="desc">{{ `Bạn có chắc chắn muốn xóa nhân viên ${props.employee.employeeCode} không ?` }}</span>
         <form class="actions" @submit.prevent="handleSubmit">
           <div class="cta-group">
             <button type="button" class="cta-group__clear-btn" @click="closeEmployeeDialog">Không</button>
